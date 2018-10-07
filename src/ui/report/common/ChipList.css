@@ -1,0 +1,11 @@
+.chipList {
+    &.clickable .chip {
+        cursor: pointer;
+    }
+    &.displayInline .chip {
+        display: inline-block;
+    }
+    &:not(.displayInline) .chip {
+        margin-bottom: 4px
+    }
+}

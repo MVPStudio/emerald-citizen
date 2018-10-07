@@ -1,0 +1,13 @@
+{
+	"ignore": [
+		".git",
+		"node_modules",
+		"build"
+	],
+	"watch": [
+		"./src/server",
+		"../shared"
+	],
+	"exec": "DEBUG=knex:query,knex:bindings,knex:tx ts-node -r tsconfig-paths/register --inspect=9229 src/server/server.ts",
+	"ext": "ts"
+}

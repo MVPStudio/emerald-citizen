@@ -1,0 +1,29 @@
+{
+	"compilerOptions": {
+		"outDir": "../dist",
+		"target": "es5",
+		"lib": [
+			"es2017",
+			"dom"
+		],
+		"module": "commonjs",
+		"sourceMap": true,
+		"moduleResolution": "node",
+		"forceConsistentCasingInFileNames": true,
+		"noImplicitReturns": true,
+		"noImplicitThis": true,
+		"noImplicitAny": true,
+		"strictNullChecks": true,
+		"suppressImplicitAnyIndexErrors": true,
+		"experimentalDecorators": true,
+		"jsx": "react",
+		"baseUrl": "./src"
+	},
+	"include": [
+		"src/**/*",
+		"knexfile.ts"
+	],
+	"exclude": [
+		"node_modules"
+	]
+}

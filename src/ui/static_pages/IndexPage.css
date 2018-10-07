@@ -1,0 +1,12 @@
+.indexPage {
+	.logo {
+		position: relative;
+		text-align: center;
+		margin: 25% auto;
+
+		img {
+			width: 95%;
+			max-width: 400px;
+		}
+	}
+}

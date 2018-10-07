@@ -1,0 +1,36 @@
+.reportForm {
+    h1 {
+        letter-spacing: 3px;
+        color: #394648;
+        span {
+            font-size: 1.5em;
+            margin-right: 5px;
+            bottom: -.2em;
+            position: relative;
+        }
+    }
+		
+    h5 {
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #999;
+        max-width: 400px;
+        margin: 45px auto;
+
+        a {
+            color: #9C1A1C;
+        }
+    }
+
+    textarea {
+        min-height: 100px;
+        padding-right: 5px;
+        resize: vertical;
+        font-family: 'Oxygen', sans-serif;
+    }
+
+    .submitButton {
+        float: right;
+    }
+}

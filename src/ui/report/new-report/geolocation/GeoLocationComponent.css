@@ -1,0 +1,80 @@
+.geoLocation {
+    position: relative;
+
+    :global(.leaflet-container) {
+        height: 100px;
+        opacity: 0;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+    }
+
+    &.showMap :global(.leaflet-container) {
+        opacity: 1;
+    }
+
+    .input {
+        padding-right: 80px
+    }
+
+    &.hideInput > .input {
+        display: none;
+    }
+
+    button {
+        position: absolute;
+        top: 15px;
+        width: 64px;
+        min-width: 0px;
+        right: 0px;
+
+        span {
+            margin: 0;
+        }
+    }
+
+    > div:last-child {
+        top: -20px;
+
+        > div {
+            right: 80px;
+            z-index: 10000;
+            width: auto!important;
+            left: 0;
+        }
+
+        input {
+            display: none!important;
+        }
+    }
+
+    .loading {
+        padding: 36px 0 20px;
+        height: 20px;
+    }
+
+    .locationChip {
+        max-width: 92%;
+        padding: 20px 0;
+        height: 36px;
+
+        > div > span:last-child {
+            position: absolute;
+            right: 0;
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            padding: 4px;
+            margin: 4px;
+            vertical-align: middle;
+            cursor: pointer;
+
+            svg {
+                border-radius: 24px;
+
+                path {
+                    stroke-width: 4px;
+                }
+            }
+        }
+
+    }
+}
