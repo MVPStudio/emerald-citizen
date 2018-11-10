@@ -2,7 +2,7 @@ import * as React from 'react';
 import Input from 'react-toolbox/lib/input';
 import FontIcon from 'react-toolbox/lib/font_icon';
 import Button from 'react-toolbox/lib/button';
-import { CreateReportRequest, Person, CreateVehicleRequest, CreatePersonRequest } from 'shared/ApiClient';
+import { CreateReportRequest, Person, CreateVehicleRequest, CreatePersonRequest, MediaSignedUpload } from 'shared/ApiClient';
 import { ChipField } from '../common/ChipField';
 import * as moment from 'moment';
 import { GeoLocation } from './geolocation/GeoLocation';
@@ -10,19 +10,20 @@ import { GeoLocation } from './geolocation/GeoLocation';
 const classes = require('./NewReportFormComponent.css');
 
 export interface NewReportFormProps {
-	report: Partial<CreateReportRequest>
+	report: Partial<CreateReportRequest>;
+	fileUrls: string[];
 	updateReport: (update: Partial<CreateReportRequest>) => void;
 	saveReport: () => void;
 	navigateToNewPersonForm: (category: string) => void;
 	navigateToEditPersonForm: (id: number) => void;
 	navigateToNewVehicleForm: () => void;
 	navigateToEditVehicleForm: (id: number) => void;
+	uploadFile: (file: File) => void;
 }
 
 export class NewReportFormComponent extends React.Component<NewReportFormProps> {
-
 	render() {
-		const { report } = this.props;
+		const { report, fileUrls } = this.props;
 		const people = report.people || [];
 		const vehicles = report.vehicles || [];
 		const date = moment(report.date ? parseInt(report.date, 10) : Date.now());
@@ -118,6 +119,7 @@ export class NewReportFormComponent extends React.Component<NewReportFormProps> 
 					getTitle={this.getVehicleTitle}
 				/>
 				<br/>
+				{fileUrls.map((url, index) => <div key={index}> <img src={url} width='500px' /> <br/></div>)}
 				<Input
 					multiline={true}
 					value={report.details}
@@ -126,9 +128,15 @@ export class NewReportFormComponent extends React.Component<NewReportFormProps> 
 								Any detail could help.'
 					onChange={this.setValueHandler('details')}
 				/>
+				<br/>
+				<Input type='file' onChange={this.uploadFile}/>
 				<Button type='submit' label='Submit' raised={true} primary={true}/>
 			</form>
 		);
+	}
+
+	private uploadFile = (_: string, e: any) => {
+		this.props.uploadFile(e.target.files[0]);
 	}
 
 	private getNewPersonTitle = (person: CreatePersonRequest) => {

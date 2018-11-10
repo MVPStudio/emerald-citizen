@@ -20,7 +20,7 @@ export const getReportRoutes = (reportService = ReportService.getInstance()) =>
 		])
 		.post('/:id/addendum', [
 			(req: Request, res: Response) => {
-				const addendum = {
+				const addendum: CreateReportAddendumRequest = {
 					report_id: parseInt(req.params.id, 10),
 					text: req.body.text as string
 				};

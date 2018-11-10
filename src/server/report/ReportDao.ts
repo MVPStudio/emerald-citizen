@@ -55,7 +55,7 @@ export class ReportDao {
 				.transacting(trx)
 				.insert(r)
 				.returning('*')
-				.get<ReportPersistence>(0);
+				.get(0);
 			const withReportId = (item: any) => ({ ...item, report_id: savedReport.id });
 
 			if (people != null) {
@@ -82,7 +82,7 @@ export class ReportDao {
 		return this.dbClient(ReportDao.addendumTableName)
 			.insert(req)
 			.returning('*')
-			.get<ReportAddendumPersistence>(0); ;
+			.get(0);
 	}
 }
 

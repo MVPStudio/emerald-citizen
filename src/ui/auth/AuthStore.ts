@@ -23,7 +23,7 @@ export class AuthStore {
 			},
 			(redirect: boolean) => {
 				if (redirect) {
-					// HACK: router5 seems to need the current observable chain to finish bofore it can update the url again
+					// HACK: router5 seems to need the current observable chain to finish before it can update the url again
 					setTimeout(() => this.routerStore.router.navigate('login'));
 				}
 			},

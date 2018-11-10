@@ -12,20 +12,6 @@ import { Button } from 'react-toolbox/lib/button';
 
 const classes = require('./NavBar.css');
 
-export const NavBar = observer(() => {
-	const authStore = AuthStore.getInstance();
-	const routerStore = RouterStore.getInstance();
-
-	const props: NavBarComponentProps = {
-		login: authStore.login,
-		logout: authStore.logout,
-		currentRoute: routerStore.route ? routerStore.route.name : undefined,
-		user: authStore.user
-	};
-
-	return <NavBarComponent {...props} />;
-});
-
 export interface NavBarComponentProps {
 	user: User | null;
 	login: (req: LoginRequest) => void;
@@ -114,3 +100,17 @@ export class NavBarComponent extends React.Component<NavBarComponentProps, NavBa
 		this.setState({ drawerOpen: false });
 	}
 }
+
+export const NavBar = observer(() => {
+	const authStore = AuthStore.getInstance();
+	const routerStore = RouterStore.getInstance();
+
+	const props: NavBarComponentProps = {
+		login: authStore.login,
+		logout: authStore.logout,
+		currentRoute: routerStore.route ? routerStore.route.name : undefined,
+		user: authStore.user
+	};
+
+	return <NavBarComponent {...props} />;
+});

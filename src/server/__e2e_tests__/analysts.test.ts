@@ -5,7 +5,7 @@ import { PersonCategory } from '../report/ReportDao';
 describe('analysts', () => {
 
 	it('should be able to view all reports', async () => {
-		await testsClient.users.login({ username: 'admin', password: 'admin' });
+		await testsClient.auth.login({ username: 'admin', password: 'admin' });
 		const reportReq: CreateReportRequest = {
 			user_id: 1,
 			date: testsClient.now(),
@@ -14,6 +14,7 @@ describe('analysts', () => {
 			details: 'some serious details...',
 			people: [{
 				name: 'name',
+				age: 112,
 				height: 'height',
 				weight: 'weight',
 				hair_color: 'hair_color',
@@ -34,7 +35,7 @@ describe('analysts', () => {
 		await testsClient.reports.create(reportReq);
 		await testsClient.reports.create(reportReq);
 
-		await testsClient.users.login({ username: 'analyst', password: 'analyst' });
+		await testsClient.auth.login({ username: 'analyst', password: 'analyst' });
 
 		const { data: reports } = await testsClient.reports.find();
 		await Promise.all(reports.map(report => testsClient.reports.findById(report.id)));

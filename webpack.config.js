@@ -52,7 +52,7 @@ module.exports = {
 		filename: 'bundle.js',
 		path: path.resolve(srcPath, 'public', 'static')
 	},
-	plugins: [
-		new MiniCssExtractPlugin({ filename: 'styles.css' })
-	]
+	// plugins: [
+	// 	new MiniCssExtractPlugin({ filename: 'styles.css' })
+	// ]
 };

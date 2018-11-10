@@ -30,7 +30,7 @@ export class UserDao {
 		return this.dbClient(UserDao.tableName)
 			.insert(user)
 			.returning('*')
-			.get<UserPersistence>(0);
+			.get(0);
 	}
 
 	public async update(id: number, userUpdate: Partial<UserPersistence>): Promise<UserPersistence> {
@@ -38,7 +38,7 @@ export class UserDao {
 			.update({ ...userUpdate, id, updated: new Date(), created_at: undefined })
 			.where({ id })
 			.returning('*')
-			.get<UserPersistence>(0);
+			.get(0);
 	}
 
 	public async deleteById(id: number): Promise<void> {

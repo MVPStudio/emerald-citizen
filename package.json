@@ -6,16 +6,20 @@
 		"start:dev-server": "nodemon",
 		"start:webpack": "webpack --watch --mode development",
 		"lint": "tslint -p ./tsconfig.json",
-		"build-ui": "webpack",
-		"build": "rm -rf build/dist && yarn install && tsc && yarn install --production --ignore-scripts --prefer-offline && cp -R node_modules build/dist/node_modules && cp .env build/dist/ && cp package.json build/dist/",
+		"compile": "tsc -p ./tsconfig.json",
+		"build-ui": "webpack --mode production",
+		"clean": "rm -rf ./build/dist",
+		"copy-assets": "echo 'copying assets...' && cp .env build/dist/ && cp package.json build/dist/ && cp -R src/public build/dist/src && cp -R node_modules build/dist/node_modules",
+		"build": "yarn clean && yarn install --frozen-lockfile && yarn lint && yarn compile && yarn build-ui && yarn copy-assets",
 		"server-e2e-tests": "DATABASE_NAME=emcit_test DEBUG=knex:query,knex:bindings,knex:tx jest --runInBand --config=jest.e2e.config.json",
-		"unit-tests": "jest --config=jest.server.unit.config.json --coverage && jest --config=jest.ui.unit.config.json --coverage",
+		"unit-tests": "jest --config=jest.server.unit.config.json --coverage --passWithNoTests && jest --config=jest.ui.unit.config.json --coverage --passWithNoTests",
 		"testWatch": "jest --config=jest.config.json --watch",
 		"create-migration": "knex migrate:make",
 		"create-database": "ts-node -r tsconfig-paths/register ./src/server/database/setup/createDatabase",
 		"drop-database": "ts-node -r tsconfig-paths/register ./src/server/database/setup/dropDatabase"
 	},
 	"dependencies": {
+		"aws-sdk": "^2.348.0",
 		"axios": "^0.18.0",
 		"bluebird": "^3.4.6",
 		"body-parser": "^1.18.3",
@@ -36,6 +40,7 @@
 		"moment": "^2.22.2",
 		"pg": "^7.0.2",
 		"pug": "^2.0.3",
+		"uuid": "^3.3.2",
 		"winston": "^2.3.1"
 	},
 	"devDependencies": {
@@ -55,6 +60,7 @@
 		"@types/react": "^15.6.2",
 		"@types/react-dom": "^15.5.8",
 		"@types/react-test-renderer": "^15.5.7",
+		"@types/uuid": "^3.4.4",
 		"@types/winston": "^2.3.4",
 		"autoprefixer": "^9.1.3",
 		"classnames": "^2.2.6",
@@ -85,7 +91,6 @@
 		"tslint-no-circular-imports": "^0.1.0",
 		"tslint-react": "^3.1.0",
 		"typescript": "^3.0.0-rc",
-		"typings-for-css-modules-loader": "^1.7.0",
 		"webpack": "^4.0.0",
 		"webpack-command": "^0.4.1"
 	}

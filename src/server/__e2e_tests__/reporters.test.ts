@@ -5,7 +5,7 @@ import { PersonCategory } from '../report/ReportDao';
 describe('reporters', () => {
 
 	it('should be able to create a report', async () => {
-		const { data: user } = await testsClient.users.login({ username: 'reporter', password: 'reporter' });
+		const { data: user } = await testsClient.auth.login({ username: 'reporter', password: 'reporter' });
 
 		const reportReq: CreateReportRequest = {
 			user_id: user.id,
@@ -15,6 +15,7 @@ describe('reporters', () => {
 			details: 'some serious details...',
 			people: [{
 				name: 'name',
+				age: 111,
 				height: 'height',
 				weight: 'weight',
 				hair_color: 'hair_color',

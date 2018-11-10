@@ -31,7 +31,9 @@
 		"js"
 	],
 	"testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
-	"modulePaths": ["<rootDir>/src"],
+	"modulePaths": [
+		"<rootDir>/src"
+	],
 	"coverageDirectory": "./build/jest/coverage",
 	"cacheDirectory": "./build/jest/cache"
 }

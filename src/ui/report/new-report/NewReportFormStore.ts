@@ -1,6 +1,6 @@
-import { observable, action, computed } from 'mobx';
+import { observable, action, computed, runInAction } from 'mobx';
 import { uiApiClient } from 'ui/common/uiApiClient';
-import { CreateReportRequest, CreatePersonRequest, PersonCategory, CreateVehicleRequest } from 'shared/ApiClient';
+import { CreateReportRequest, CreatePersonRequest, PersonCategory, CreateVehicleRequest, MediaSignedUpload } from 'shared/ApiClient';
 import { RouterStore } from 'ui/routing/RouterStore';
 import { NewReportFormProps } from './NewReportFormComponent';
 import { NewPersonFormProps } from './new-person/NewPersonFormComponent';
@@ -29,12 +29,14 @@ export class NewReportFormStore {
 	public get newReportFormProps(): NewReportFormProps {
 		return {
 			report: this.report,
+			fileUrls: this.fileUrls,
 			updateReport: this.updateReport,
 			saveReport: this.saveReport,
 			navigateToNewPersonForm: this.navigateToNewPersonForm,
 			navigateToEditPersonForm: this.navigateToEditPersonForm,
 			navigateToNewVehicleForm: this.navigateToNewVehicleForm,
-			navigateToEditVehicleForm: this.navigateToEditVehicleForm
+			navigateToEditVehicleForm: this.navigateToEditVehicleForm,
+			uploadFile: this.uploadFile
 		};
 	}
 
@@ -107,6 +109,28 @@ export class NewReportFormStore {
 	private navigateToEditPersonForm(id: number) {
 		this.person = (this.report.people || [])[id] || {};
 		this.routerStore.router.navigate('newPerson', { id });
+	}
+
+	/**
+	 * Files state
+	 */
+	@observable.ref
+	public fileUrls: string[] = [];
+
+	@action.bound
+	public async uploadFile(file: File) {
+		const { uploadData, getUrl } = (await this.apiClient.media.getSignedUpload()).data;
+		await this.apiClient.media.uploadFileToS3(uploadData.url, uploadData.fields, file);
+		runInAction(() => {
+			const files = this.report.files || [];
+			files.push(uploadData.fields.key);
+			this.updateReport({ files });
+			// wait a second to make sure upload finished
+			setTimeout(
+				() => this.fileUrls = this.fileUrls.concat(getUrl),
+				1000
+			);
+		});
 	}
 
 	/**

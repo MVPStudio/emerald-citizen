@@ -1,33 +1,6 @@
 import * as dotenv from 'dotenv';
 import { cpus } from 'os';
 
-interface ServerConfig {
-	isDevelopment: boolean;
-	isProduction: boolean;
-	serverPort: number;
-	workerCount: number;
-	database: {
-		client: 'pg',
-		acquireConnectionTimeout: number;
-		connection: {
-			debug: boolean;
-			host: string;
-			user: string;
-			password: string;
-			database: string;
-			requestTimeout: number;
-		},
-		pool: {
-			min: number;
-			max: number;
-		},
-		migrations: {
-			directory: './src/server/database/migrations',
-			tableName: 'migrations'
-		}
-	};
-}
-
 /**
  * Load environment variables from .env file.
  */
@@ -39,11 +12,14 @@ const getEnvBoolean = (name: string): boolean => getEnvString(name) === 'true';
 const isProduction = process.env.NODE_ENV === 'production';
 const workerCount = getEnvNumber('WORKER_COUNT') || cpus().length;
 
-export const config: ServerConfig = {
+export const config = {
 	isDevelopment: process.env.NODE_ENV === 'development',
 	isProduction,
 	serverPort: getEnvNumber('SERVER_PORT') || 8080,
 	workerCount,
+	sessionSecret: getEnvString('SESSION_SECRET'),
+	assumeRole: getEnvBoolean('ASSUME_ROLE'),
+	s3Bucket: getEnvString('S3_BUCKET'),
 	database: {
 		client: 'pg',
 		acquireConnectionTimeout: getEnvNumber('DATABASE_ACQUIRE_CONNECTION_TIMEOUT'),

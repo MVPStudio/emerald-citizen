@@ -17,16 +17,6 @@ interface LoginPageComponentState {
 	password: string;
 }
 
-export const LoginPage = observer(() => {
-	const authState = AuthStore.getInstance();
-	const props = {
-		login: authState.login,
-		loginFailed: authState.loginFailed
-	};
-
-	return <LoginPageComponent {...props} />;
-});
-
 export class LoginPageComponent extends React.Component<LoginPageComponentProps, LoginPageComponentState> {
 	public state = {
 		username: '',
@@ -66,3 +56,13 @@ export class LoginPageComponent extends React.Component<LoginPageComponentProps,
 		this.props.login(this.state);
 	}
 }
+
+export const LoginPage = observer(() => {
+	const authState = AuthStore.getInstance();
+	const props = {
+		login: authState.login,
+		loginFailed: authState.loginFailed
+	};
+
+	return <LoginPageComponent {...props} />;
+});

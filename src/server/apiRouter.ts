@@ -9,6 +9,7 @@ import { errorHandler } from './lib/middleware/errorHandler';
 import { logger } from './logger';
 import { getMeRoutes } from './me/MeRoutes';
 import { getAuthRoutes } from './auth/AuthRoutes';
+import { getMediaRoutes } from './media/MediaRoutes';
 
 export const getApiRouter = () => {
 	return Router()
@@ -22,12 +23,13 @@ export const getApiRouter = () => {
 			.use('/me', getMeRoutes())
 			.use('/users', getUserRoutes())
 			.use('/reports', getReportRoutes())
+			.use('/media', getMediaRoutes())
 			.use(errorStatusCodes)
 			.use(errorHandler)
 		);
 }
 
-const requestLogger = (req: Request, res: Response, next: NextFunction) => {
+function requestLogger(req: Request, res: Response, next: NextFunction) {
 	const { method, originalUrl, params, query, body, headers } = req;
 	const { password, ...bodyWithoutPassword } = body;
 	const { cookie, ...headersWithoutCookie } = headers;

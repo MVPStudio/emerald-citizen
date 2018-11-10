@@ -9,7 +9,9 @@ export const getAuthRoutes = (authService = AuthService.getInstance()) =>
 			}
 		])
 		.post('/logout', [
-			(req: Request, res: Response) => {
-				res.sendPromise(authService.logout(req.session as Express.Session));
+			async (req: Request, res: Response) => {
+				await authService.logout(req.session as Express.Session);
+				res.clearCookie('connect.sid');
+				res.status(200).end();
 			}
 		]);

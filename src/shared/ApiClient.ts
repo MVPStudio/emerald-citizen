@@ -1,4 +1,5 @@
 import { AxiosInstance } from 'axios';
+import { PresignedPost } from 'aws-sdk/clients/s3';
 
 export class ApiClient {
 	constructor(
@@ -9,7 +10,8 @@ export class ApiClient {
 	private authUrl = `${this.rootApiUrl}/auth`;
 	private meUrl = `${this.rootApiUrl}/me`;
 	private usersUrl = `${this.rootApiUrl}/users`;
-	private reportsUrls = `${this.rootApiUrl}/reports`;
+	private reportsUrl = `${this.rootApiUrl}/reports`;
+	private mediaUrl = `${this.rootApiUrl}/media`;
 
 	public readonly auth = {
 		login: (req: LoginRequest) => this.client.post<User>(`${this.authUrl}/login`, req),
@@ -31,10 +33,22 @@ export class ApiClient {
 
 	public readonly reports = {
 		find: () => this.client.get<Report[]>(this.usersUrl),
-		findById: (id: number) => this.client.get<Report | null>(`${this.reportsUrls}/${id}`),
-		create: (req: CreateReportRequest) => this.client.post<Report>(this.reportsUrls, req),
-		addAddendum: (id: number, text: string) => this.client.post<Report>(`${this.reportsUrls}/${id}/addendum`, { text }),
-		delete: (id: number) => this.client.delete(`${this.reportsUrls}/${id}`)
+		findById: (id: number) => this.client.get<Report | null>(`${this.reportsUrl}/${id}`),
+		create: (req: CreateReportRequest) => this.client.post<Report>(this.reportsUrl, req),
+		addAddendum: (id: number, text: string) => this.client.post<Report>(`${this.reportsUrl}/${id}/addendum`, { text }),
+		delete: (id: number) => this.client.delete(`${this.reportsUrl}/${id}`)
+	}
+
+	public readonly media = {
+		getSignedUpload: () => this.client.get<MediaSignedUpload>(`${this.mediaUrl}/signed_upload`),
+		uploadFileToS3: (url: string, fields: Record<string, string>, file: File) => {
+			const data = new FormData();
+
+			Object.entries(fields).forEach(([key, value]) => data.append(key, value));
+			data.append('file', file);
+
+			this.client.post<void>(url, data);
+		}
 	}
 
 	public now = () => (new Date()).toISOString();
@@ -81,6 +95,7 @@ export interface CreateReportRequest {
 	geo_longitude?: number;
 	people?: CreatePersonRequest[];
 	vehicles?: CreateVehicleRequest[];
+	files?: string[];
 }
 
 export interface Report extends CreateReportRequest, Timestamped {
@@ -134,4 +149,9 @@ export interface CreateReportAddendumRequest {
 
 export interface ReportAddendum extends CreateReportAddendumRequest, Timestamped {
 	id: number;
+}
+
+export interface MediaSignedUpload {
+	uploadData: PresignedPost
+	getUrl: string;
 }
