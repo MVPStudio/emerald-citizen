@@ -85,6 +85,7 @@ export class NewReportFormStore {
 	@action.bound
 	private resetReport() {
 		this.report = {};
+		this.fileUrls = [];
 	}
 
 	@action.bound
