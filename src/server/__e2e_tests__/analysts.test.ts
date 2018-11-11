@@ -14,7 +14,7 @@ describe('analysts', () => {
 			details: 'some serious details...',
 			people: [{
 				name: 'name',
-				age: 112,
+				age: '112',
 				height: 'height',
 				weight: 'weight',
 				hair_color: 'hair_color',

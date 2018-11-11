@@ -4,13 +4,11 @@ import { logger } from './logger';
 import { getApiRouter } from './apiRouter';
 import { getDbClientInstance } from './database/dbClient';
 import { config } from './config';
-import * as cluster from 'cluster';
 import { join } from 'path';
 import * as csurf from 'csurf';
 import * as session from 'express-session';
 
 const lusca = require('lusca');
-const expressCluster = require('express-cluster');
 
 export const shutdownServer = () => {
 	logger.info('Server received a shutdown signal, closing database connections and shutting down...');
@@ -77,13 +75,5 @@ export const runServer = async () => {
 };
 
 if (require.main === module) {
-	if (config.isProduction && cluster.isMaster) {
-		logger.info('Running in production, starting a worker per cpu.');
-		expressCluster(
-			runServer,
-			{ count: config.workerCount }
-		);
-	} else {
-		runServer();
-	}
+	runServer();
 }

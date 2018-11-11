@@ -123,7 +123,7 @@ export class NewReportFormStore {
 		await this.apiClient.media.uploadFileToS3(uploadData.url, uploadData.fields, file);
 		runInAction(() => {
 			const files = this.report.files || [];
-			files.push(uploadData.fields.key);
+			files.push({ filename: uploadData.fields.key });
 			this.updateReport({ files });
 			// wait a second to make sure upload finished
 			setTimeout(

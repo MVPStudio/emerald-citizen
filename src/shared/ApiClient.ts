@@ -87,7 +87,7 @@ export enum UserRole {
 
 export interface CreateReportRequest {
 	user_id: number;
-	date: string;
+	date?: string;
 	location?: string;
 	room_number?: string;
 	details?: string;
@@ -95,7 +95,7 @@ export interface CreateReportRequest {
 	geo_longitude?: number;
 	people?: CreatePersonRequest[];
 	vehicles?: CreateVehicleRequest[];
-	files?: string[];
+	files?: CreateReportFileRequest[];
 }
 
 export interface Report extends CreateReportRequest, Timestamped {
@@ -103,6 +103,7 @@ export interface Report extends CreateReportRequest, Timestamped {
 	people: Person[];
 	vehicles: Vehicle[];
 	addendums: ReportAddendum[];
+	files: ReportFile[];
 }
 
 export interface CreateVehicleRequest {
@@ -125,7 +126,7 @@ export enum PersonCategory {
 
 export interface CreatePersonRequest {
 	name: string | null;
-	age: number | null;
+	age: string | null;
 	height: string | null;
 	weight: string | null;
 	hair_color: string | null;
@@ -154,4 +155,13 @@ export interface ReportAddendum extends CreateReportAddendumRequest, Timestamped
 export interface MediaSignedUpload {
 	uploadData: PresignedPost
 	getUrl: string;
+}
+
+export interface CreateReportFileRequest {
+	filename: string;
+}
+
+export interface ReportFile extends CreateReportFileRequest, Timestamped {
+	id: number;
+	url: string;
 }

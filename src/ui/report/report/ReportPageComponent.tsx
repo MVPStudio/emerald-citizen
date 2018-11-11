@@ -57,7 +57,9 @@ export class ReportPageComponent extends React.Component<ReportPageComponentProp
 			geo_longitude,
 			people,
 			vehicles,
-			addendums
+			addendums,
+			created_at,
+			files
 		} = report;
 
 		const reportActions = [];
@@ -84,7 +86,7 @@ export class ReportPageComponent extends React.Component<ReportPageComponentProp
 					<List>
 						<ListItem
 							ripple={false}
-							caption={(new Date(date)).toDateString()}
+							caption={(new Date(date || created_at)).toDateString()}
 							legend='date'
 							rightActions={reportActions}
 						/>
@@ -150,6 +152,7 @@ export class ReportPageComponent extends React.Component<ReportPageComponentProp
 						</div>
 					</List>
 				</Card>
+				{files.map(({ url }, index) => <div key={index}> <img src={url} width='500px' /> <br /></div>)}
 				<Dialog
 					actions={this.dialogActions}
 					active={this.state.showAddendumDialog}

@@ -30,10 +30,10 @@ export class MyReportsPageComponent extends React.Component<MyReportsPageCompone
 							<TableCell>Location</TableCell>
 							<TableCell>Details</TableCell>
 						</TableHead>
-						{myReports.map(({ id, date, location, details }, idx) => (
+						{myReports.map(({ id, date, location, details, created_at }, idx) => (
 
 							<TableRow key={idx}>
-								<TableCell onClick={this.cellClickHandler(id)}>{(new Date(date)).toDateString()}</TableCell>
+								<TableCell onClick={this.cellClickHandler(id)}>{(new Date(date || created_at)).toDateString()}</TableCell>
 								<TableCell onClick={this.cellClickHandler(id)}>{location}</TableCell>
 								<TableCell onClick={this.cellClickHandler(id)}>{details}</TableCell>
 							</TableRow>

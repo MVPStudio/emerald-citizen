@@ -15,7 +15,7 @@ describe('reporters', () => {
 			details: 'some serious details...',
 			people: [{
 				name: 'name',
-				age: 111,
+				age: '111',
 				height: 'height',
 				weight: 'weight',
 				hair_color: 'hair_color',

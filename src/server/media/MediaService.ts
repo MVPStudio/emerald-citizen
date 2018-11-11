@@ -35,15 +35,23 @@ export class MediaService {
 						return reject(err)
 					}
 
-					this.s3.getSignedUrl('getObject', { Bucket: this.bucket, Key: key }, (err2, getUrl) => {
-						if (err2) {
-							return reject(err2)
-						}
-
-						resolve({ uploadData, getUrl });
-					});
+					this.getSignedUrl(key)
+						.then(getUrl => resolve({ uploadData, getUrl }))
+						.catch(reject);
 				}
 			)
 		});
+	}
+
+	public getSignedUrl(filename: string): Promise<string> {
+		return new Promise((resolve, reject) =>
+			this.s3.getSignedUrl('getObject', { Bucket: this.bucket, Key: filename }, (err, url) => {
+				if (err) {
+					return reject(err)
+				}
+
+				resolve(url);
+			})
+		);
 	}
 }

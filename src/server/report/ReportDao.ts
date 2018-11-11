@@ -12,6 +12,7 @@ export class ReportDao {
 	public static vehicleTableName = 'vehicle';
 	public static personTableName = 'person';
 	public static addendumTableName = 'report_addendum';
+	public static fileTableName = 'report_file';
 
 	constructor(
 		private dbClient: Knex = getDbClientInstance()
@@ -30,17 +31,19 @@ export class ReportDao {
 			return null;
 		}
 
-		const [people, vehicles, addendums] = await Promise.all([
+		const [people, vehicles, addendums, files] = await Promise.all([
 			this.dbClient(ReportDao.personTableName).select('*').where({ report_id: id }),
 			this.dbClient(ReportDao.vehicleTableName).select('*').where({ report_id: id }),
-			this.dbClient(ReportDao.addendumTableName).select('*').where({ report_id: id })
+			this.dbClient(ReportDao.addendumTableName).select('*').where({ report_id: id }),
+			this.dbClient(ReportDao.fileTableName).select('*').where({ report_id: id })
 		]);
 
 		return {
 			...report,
 			people,
 			vehicles,
-			addendums
+			addendums,
+			files
 		};
 	}
 
@@ -50,7 +53,7 @@ export class ReportDao {
 
 	public async create(report: CreateReportPersistence): Promise<ReportPersistence> {
 		const id = await this.dbClient.transaction(async (trx) => {
-			const { people, vehicles, ...r } = report;
+			const { people, vehicles, files, ...r } = report;
 			const savedReport = await this.dbClient(ReportDao.tableName)
 				.transacting(trx)
 				.insert(r)
@@ -64,6 +67,10 @@ export class ReportDao {
 
 			if (vehicles != null) {
 				await this.dbClient.batchInsert(ReportDao.vehicleTableName, vehicles.map(withReportId)).transacting(trx);
+			}
+
+			if (files != null) {
+				await this.dbClient.batchInsert(ReportDao.fileTableName, files.map(withReportId)).transacting(trx);
 			}
 
 			return savedReport.id;
@@ -96,12 +103,15 @@ export interface CreateReportPersistence {
 	geo_longitude?: number;
 	people?: CreatePersonPersistence[];
 	vehicles?: CreateVehiclePersistence[];
+	files?: CreateFilePersistence[];
 }
 
 export interface ReportPersistence extends CreateReportPersistence, TimestampedPersistence {
 	id: number;
 	people: PersonPersistence[];
 	vehicles: VehiclePersistence[];
+	files: FilePersistence[];
+	addendums: ReportAddendumPersistence[];
 }
 
 export interface CreateVehiclePersistence {
@@ -125,6 +135,7 @@ export enum PersonCategory {
 export interface CreatePersonPersistence {
 	name: string | null;
 	height: string | null;
+	age: string | null;
 	weight: string | null;
 	hair_color: string | null;
 	hair_length: string | null;
@@ -146,5 +157,13 @@ export interface CreateReportAddendumPersistence {
 }
 
 export interface ReportAddendumPersistence extends CreateReportAddendumPersistence, TimestampedPersistence {
+	id: number;
+}
+
+export interface CreateFilePersistence {
+	filename: string;
+}
+
+export interface FilePersistence extends CreateFilePersistence, TimestampedPersistence {
 	id: number;
 }
