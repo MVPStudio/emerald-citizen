@@ -12,7 +12,6 @@ describe('admins', () => {
 
 		expect(user.id).toBeDefined();
 		expect(user.username).toBe(username);
-		expect(user.password).toBe(undefined);
 		expect(user.is_active).toBe(true);
 
 		await testsClient.auth.login({ username, password });

@@ -1,6 +1,5 @@
 import { testsClient } from './testsClient';
-import { CreateReportRequest } from 'shared/ApiClient';
-import { PersonCategory } from '../report/ReportDao';
+import { CreateReportRequest, PersonSex, PersonCategory } from 'shared/ApiClient';
 
 describe('reporters', () => {
 
@@ -22,7 +21,7 @@ describe('reporters', () => {
 				hair_length: 'hair_length',
 				eye_color: 'eye_color',
 				skin_color: 'skin_color',
-				sex: 'sex',
+				sex: PersonSex.male,
 				details: 'details',
 				category: PersonCategory.suspicious_person
 			}],

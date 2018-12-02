@@ -8,7 +8,7 @@ import Button from 'react-toolbox/lib/button';
 
 const classes = require('./ReportsTablePage.css');
 
-export interface ReportsTableProps {
+export interface ReportsTablePageProps {
 	fetchReports: () => void;
 	reports: ReportPage[];
 	goToReportPage: (id: number) => void;
@@ -19,12 +19,12 @@ export interface ReportsTableProps {
 	showPrevPage: boolean;
 }
 
-export class ReportsTable extends React.Component<ReportsTableProps> {
+export class ReportsTable extends React.Component<ReportsTablePageProps> {
 	componentDidMount() {
 		this.props.fetchReports();
 	}
 
-	componentDidUpdate(prevProps: ReportsTableProps) {
+	componentDidUpdate(prevProps: ReportsTablePageProps) {
 		if (prevProps.page !== this.props.page) {
 			this.props.fetchReports();
 		}

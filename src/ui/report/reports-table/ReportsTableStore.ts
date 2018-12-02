@@ -1,7 +1,7 @@
-import { observable, action, computed, reaction, observe } from 'mobx';
+import { observable, action, computed } from 'mobx';
 import { uiApiClient } from 'ui/common/uiApiClient';
 import { ReportPage } from 'shared/ApiClient';
-import { ReportsTableComponentProps } from './ReportsTableComponent';
+import { ReportsTablePageProps } from './ReportsTablePage';
 import { RouterStore } from '../../routing/RouterStore';
 
 export class ReportsTableStore {
@@ -45,7 +45,7 @@ export class ReportsTableStore {
 	}
 
 	@computed
-	public get props(): ReportsTableComponentProps {
+	public get props(): ReportsTablePageProps {
 		return {
 			page: this.page,
 			nextPage: this.reports.length ? this.page + 1 : undefined,

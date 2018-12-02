@@ -1,5 +1,5 @@
 import { testsClient } from './testsClient';
-import { CreateReportRequest } from 'shared/ApiClient';
+import { CreateReportRequest, PersonSex } from 'shared/ApiClient';
 import { PersonCategory } from '../report/ReportDao';
 
 describe('analysts', () => {
@@ -21,7 +21,7 @@ describe('analysts', () => {
 				hair_length: 'hair_length',
 				eye_color: 'eye_color',
 				skin_color: 'skin_color',
-				sex: 'sex',
+				sex: PersonSex.male,
 				details: 'details',
 				category: PersonCategory.suspicious_person
 			}],
@@ -37,7 +37,7 @@ describe('analysts', () => {
 
 		await testsClient.auth.login({ username: 'analyst', password: 'analyst' });
 
-		const { data: reports } = await testsClient.reports.find();
+		const { data: reports } = await testsClient.reports.findSortedPage();
 		await Promise.all(reports.map(report => testsClient.reports.findById(report.id)));
 	});
 
