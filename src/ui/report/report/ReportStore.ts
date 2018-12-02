@@ -5,13 +5,13 @@ import { RouterStore } from '../../routing/RouterStore';
 import { ReportPageProps } from './ReportPage';
 import { AuthStore } from '../../auth/AuthStore';
 
-export class MyReportsStore {
+export class ReportStore {
 
 	public static getInstance() {
-		return this._instance || (this._instance = new MyReportsStore());
+		return this._instance || (this._instance = new ReportStore());
 	}
 
-	private static _instance: MyReportsStore;
+	private static _instance: ReportStore;
 
 	constructor(
 		private apiClient = uiApiClient,

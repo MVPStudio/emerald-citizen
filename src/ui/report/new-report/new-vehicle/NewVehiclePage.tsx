@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MobilePageContainer } from '../../../layouts/MobilePageContainer';
+import { MobilePageContainer } from '../../../common/components/layouts/MobilePageContainer';
 import { NewVehicleForm } from './NewVehicleForm';
 
 const classes = require('./NewVehiclePage.css');

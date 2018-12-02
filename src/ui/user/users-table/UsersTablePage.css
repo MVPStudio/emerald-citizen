@@ -1,4 +1,4 @@
-.reports {
+.users {
 	h2 {
 		margin: 10px auto;
 		color: #444;
@@ -6,6 +6,12 @@
 
 	tr {
 		cursor: pointer;
+	}
+
+	td {
+		button {
+			text-decoration: underline;
+		}
 	}
 
 	.pageLinks {

@@ -14,8 +14,12 @@ export class UserDao {
 		private dbClient: Knex = getDbClientInstance()
 	) { }
 
-	public async findAll(): Promise<UserPersistence[]> {
-		return this.dbClient(UserDao.tableName).select('*');
+	public async findPage(page: number, limit: number = 50): Promise<UserPersistence[]> {
+		return this.dbClient(UserDao.tableName)
+			.select('*')
+			.orderBy('id', 'DESC')
+			.offset(page * limit)
+			.limit(limit);
 	}
 
 	public async findById(id: number): Promise<UserPersistence | null> {

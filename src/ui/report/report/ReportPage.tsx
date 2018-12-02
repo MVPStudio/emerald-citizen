@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MobilePageContainer } from '../../layouts/MobilePageContainer';
+import { MobilePageContainer } from '../../common/components/layouts/MobilePageContainer';
 import { ReportDetails } from 'shared/ApiClient';
 import Card from 'react-toolbox/lib/card';
 import Checkbox from 'react-toolbox/lib/checkbox';

@@ -1,4 +1,4 @@
-import { NotFoundPage } from '../errors/NotFoundPage';
+import { NotFoundPage } from '../static_pages/NotFoundPage';
 import { constants, Route } from 'router5';
 import { ComponentType } from 'react';
 import { NewReportPage } from '../report/new-report/NewReportPage';
@@ -12,6 +12,9 @@ import { ReportsTablePageContainer } from '../report/reports-table/ReportsTableP
 import { ReportsMapPage } from '../report/reports-map/ReportsMapPage';
 import { IndexPage } from '../static_pages/IndexPage';
 import { AuthStore } from 'ui/auth/AuthStore';
+import { UserTablePageContainer } from 'ui/user/users-table/UsersTablePageContainer';
+import { UpdatePasswordPageContainer } from 'ui/user/update-password/UpdatePasswordPageContainer';
+import { NewUserPageContainer } from 'ui/user/new-user/NewUserPageContainer';
 
 const redirectOnLoggedOut = (loggedIn: boolean) => loggedIn ? Promise.resolve(true) : Promise.reject({ redirect: { name: 'login' } })
 const mustBeLoggedIn = () => () => {
@@ -84,6 +87,24 @@ export const routes: ComponentRoute[] = [
 		name: 'reportsMap',
 		path: '/reports/map',
 		component: ReportsMapPage,
+		canActivate: mustBeLoggedIn
+	},
+	{
+		name: 'usersNew',
+		path: '/users-new',
+		component: NewUserPageContainer,
+		canActivate: mustBeLoggedIn
+	},
+	{
+		name: 'usersTable',
+		path: '/users/table',
+		component: UserTablePageContainer,
+		canActivate: mustBeLoggedIn
+	},
+	{
+		name: 'userUpdatePassword',
+		path: '/users/:id/update-password',
+		component: UpdatePasswordPageContainer,
 		canActivate: mustBeLoggedIn
 	},
 	{

@@ -50,7 +50,7 @@ export class ReportsTableStore {
 			page: this.page,
 			nextPage: this.reports.length ? this.page + 1 : undefined,
 			prevPage: this.page > 2 ? this.page - 1 : undefined,
-			showNextPage: this.reports.length > 0,
+			showNextPage: this.reports.length === 50,
 			showPrevPage: this.page > 0,
 			reports: this.reports,
 			fetchReports: this.fetchReports,

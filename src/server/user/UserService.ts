@@ -19,8 +19,8 @@ export class UserService {
 		private userDao: UserDao = UserDao.getInstance()
 	) { }
 
-	public findAll(): Promise<SanitizedUser[]> {
-		return this.userDao.findAll()
+	public findPage(page: number = 0): Promise<SanitizedUser[]> {
+		return this.userDao.findPage(page)
 			.then(users => users.map(this.sanitizeUser))
 			.catch(handleDatabaseError);
 	}

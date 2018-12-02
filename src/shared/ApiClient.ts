@@ -24,10 +24,10 @@ export class ApiClient {
 	}
 
 	public readonly users = {
-		find: () => this.client.get<User[]>(this.usersUrl),
+		findPage: (page?: number) => this.client.get<User[]>(this.usersUrl, { params: { page } }),
 		findById: (id: number) => this.client.get<User | null>(`${this.usersUrl}/${id}`),
 		create: (req: CreateUserRequest) => this.client.post<User>(this.usersUrl, req),
-		update: (req: Partial<User> & HasId) => this.client.patch<User>(`${this.usersUrl}/${req.id}`, req),
+		update: (req: Partial<User> & HasId & { password?: string }) => this.client.patch<User>(`${this.usersUrl}/${req.id}`, req),
 		delete: (id: number) => this.client.delete(`${this.usersUrl}/${id}`)
 	}
 

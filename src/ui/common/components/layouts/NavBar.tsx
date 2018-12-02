@@ -3,9 +3,9 @@ import AppBar from 'react-toolbox/lib/app_bar';
 import Navigation from 'react-toolbox/lib/navigation';
 import { Link } from 'ui/routing/Link';
 import { observer } from 'mobx-react';
-import { AuthStore } from '../auth/AuthStore';
-import { User, LoginRequest, UserRole } from 'shared/ApiClient';
-import { RouterStore } from '../routing/RouterStore';
+import { AuthStore } from 'ui/auth/AuthStore';
+import { User, UserRole } from 'shared/ApiClient';
+import { RouterStore } from 'ui/routing/RouterStore';
 import Drawer from 'react-toolbox/lib/drawer';
 import { List, ListItem, ListDivider } from 'react-toolbox/lib/list';
 import { Button } from 'react-toolbox/lib/button';
@@ -72,8 +72,8 @@ export class NavBarComponent extends React.Component<NavBarComponentProps, NavBa
 		if (role === UserRole.admin) {
 			navLinks.push(
 				<ListDivider key='adminDivider' />,
-				<Link routeName='newUser' key='navNewUser'>
-					<ListItem caption='New User' disabled={currentRoute === 'newUser'} />
+				<Link routeName='usersNew' key='navNewUser'>
+					<ListItem caption='New User' disabled={currentRoute === 'usersNew'} />
 				</Link>,
 				<Link routeName='usersTable' key='navUsersTable'>
 					<ListItem caption='Users' disabled={currentRoute === 'usersTable'} />

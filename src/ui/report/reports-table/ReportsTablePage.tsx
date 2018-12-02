@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { MobilePageContainer } from '../../layouts/MobilePageContainer';
 import { ReportPage } from 'shared/ApiClient';
 import { Table, TableHead, TableRow, TableCell } from 'react-toolbox/lib/table';
 import Card from 'react-toolbox/lib/card';
 import { Link } from 'ui/routing/Link';
 import FontIcon from 'react-toolbox/lib/font_icon';
+import Button from 'react-toolbox/lib/button';
 
 const classes = require('./ReportsTablePage.css');
 
@@ -34,7 +34,7 @@ export class ReportsTable extends React.Component<ReportsTableProps> {
 		const { reports, nextPage, prevPage, showNextPage, showPrevPage } = this.props;
 
 		return (
-			<div className={classes.myReports}>
+			<div className={classes.reports}>
 				<Card>
 					<h2>Reports</h2>
 					<Table selectable={false}>
@@ -55,8 +55,8 @@ export class ReportsTable extends React.Component<ReportsTableProps> {
 									<TableCell onClick={onClick}>{(new Date(date || created_at)).toDateString()}</TableCell>
 									<TableCell onClick={onClick}>{location}</TableCell>
 									<TableCell onClick={onClick}>{details}</TableCell>
-									<TableCell>{marked_interesting && <FontIcon value='warning' />}</TableCell>
-									<TableCell>{marked_validated && <FontIcon value='done' />}</TableCell>
+									<TableCell onClick={onClick}>{marked_interesting && <FontIcon value='warning' />}</TableCell>
+									<TableCell onClick={onClick}>{marked_validated && <FontIcon value='done' />}</TableCell>
 								</TableRow>
 							);
 						})}
@@ -65,20 +65,24 @@ export class ReportsTable extends React.Component<ReportsTableProps> {
 				<div className={classes.pageLinks}>
 					{
 						<Link
-							className={`${classes.pageLink} ${showPrevPage ? '' : 'disabled'}`}
+							className={classes.pageLink}
 							routeName={showPrevPage ? 'reportsTable' : ''}
 							routeParams={{ page: prevPage }}
 						>
-							Previous Page
+							<Button primary={true} raised={true} disabled={!showPrevPage}>
+								Previous Page
+							</Button>
 						</Link>
 					}
 					{
 						<Link
-							className={`${classes.pageLink} ${showNextPage ? '' : 'disabled'}`}
+							className={classes.pageLink}
 							routeName={showNextPage ? 'reportsTable' : ''}
 							routeParams={{ page: nextPage }}
 						>
-							Next Page
+							<Button primary={true} raised={true} disabled={!showNextPage}>
+								Next Page
+							</Button>
 						</Link>
 					}
 				</div>

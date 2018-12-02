@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { NewReportFormContainer } from './NewReportFormContainer';
-import { MobilePageContainer } from '../../layouts/MobilePageContainer';
+import { MobilePageContainer } from '../../common/components/layouts/MobilePageContainer';
 
 const classes = require('./NewReportPage.css');
 
