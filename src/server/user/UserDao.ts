@@ -23,12 +23,15 @@ export class UserDao {
 	}
 
 	public async findByUsername(username: string): Promise<UserPersistence | null> {
-		return this.dbClient(UserDao.tableName).where({ username }).first();
+		return this.dbClient(UserDao.tableName).where({ username: username.toLowerCase() }).first();
 	}
 
 	public async create(user: CreateUserPersistence): Promise<UserPersistence> {
 		return this.dbClient(UserDao.tableName)
-			.insert(user)
+			.insert({
+				...user,
+				username: user.username.toLowerCase()
+			})
 			.returning('*')
 			.get(0);
 	}

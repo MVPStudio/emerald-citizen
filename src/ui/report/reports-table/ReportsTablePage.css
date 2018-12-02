@@ -1,0 +1,32 @@
+.myReports {
+	h2 {
+		margin: 10px auto;
+		color: #444;
+	}
+
+	tr {
+		cursor: pointer;
+	}
+
+	.pageLinks {
+		width: 100%;
+		padding: 15px;
+
+		.pageLink:first-of-type {
+			left: 15px;
+		}
+
+		.pageLink:last-of-type {
+			right: 15px;
+		}
+
+		.pageLink {
+			position: absolute;
+    	font-size: 18px;
+
+			.disabled {
+				cursor: default;
+			}
+		}
+	}
+}

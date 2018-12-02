@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { MobilePageContainer } from '../../layouts/MobilePageContainer';
-import { Report } from 'shared/ApiClient';
+import { ReportDetails } from 'shared/ApiClient';
 import { Table, TableHead, TableRow, TableCell } from 'react-toolbox/lib/table';
 import Card from 'react-toolbox/lib/card';
 
 const classes = require('./MyReportsComponent.css');
 
 export interface MyReportsPageComponentProps {
-	myReports: Report[];
+	myReports: ReportDetails[];
 	fetchMyReports: () => void;
 	goToReportPage: (id: number) => void;
 }

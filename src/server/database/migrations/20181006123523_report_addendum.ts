@@ -5,7 +5,7 @@ exports.up = async (knex: Knex) => {
 		table.increments();
 		table.integer('report_id').unsigned().notNullable();
 		table.string('text').notNullable();
-		table.timestamp('created_at ').defaultTo(knex.fn.now());
+		table.timestamp('created_at').defaultTo(knex.fn.now());
 		table.timestamp('updated').defaultTo(knex.fn.now());
 	});
 };

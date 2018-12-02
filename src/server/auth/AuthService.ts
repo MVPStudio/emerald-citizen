@@ -14,9 +14,7 @@ export class AuthService {
 	) { }
 
 	public async login(session: Express.Session, { username, password }: LoginRequest): Promise<SanitizedUser> {
-		const user = await this.userService.login({ username, password });
-
-		session.userId = user.id;
+		session.user = await this.userService.login({ username, password });
 
 		await new Promise((resolve, reject) => {
 			session.save(err => {
@@ -29,7 +27,7 @@ export class AuthService {
 			});
 		});
 
-		return user;
+		return session.user;
 	}
 
 	public async logout(session: Express.Session): Promise<void> {

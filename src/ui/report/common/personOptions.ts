@@ -74,6 +74,7 @@ export const WEIGHT_OPTIONS = [
 export const SEX_OPTIONS = [
 	{ value: 'male', label: 'Male' },
 	{ value: 'female', label: 'Female' },
+	{ value: 'unsure', label: 'Unsure' }
 ];
 
 export const HAIR_COLOR_OPTIONS = [

@@ -1,7 +1,9 @@
-import { ReportDao, ReportPersistence } from './ReportDao';
-import { CreateReportRequest, CreateReportAddendumRequest, ReportAddendum, Report, ReportFile } from 'shared/ApiClient';
+import { ReportDao, ReportDetailsPersistence, ReportPagePersistence, ReportPersistence } from './ReportDao';
+import { CreateReportRequest, CreateReportAddendumRequest, ReportAddendum, ReportDetails, ReportFile } from 'shared/ApiClient';
 import { handleDatabaseError } from '../lib/databaseUtils';
 import { MediaService } from 'server/media/MediaService';
+import { UserService } from 'server/user/UserService';
+import { ServiceError, ServiceErrorCode } from 'server/lib/ServiceError';
 
 export class ReportService {
 	public static getInstance() {
@@ -12,14 +14,19 @@ export class ReportService {
 
 	constructor(
 		private reportDao: ReportDao = ReportDao.getInstance(),
-		private mediaService: MediaService = MediaService.getInstance()
+		private mediaService: MediaService = MediaService.getInstance(),
+		private userService: UserService = UserService.getInstance()
 	) { }
 
-	public findAll(): Promise<ReportPersistence[]> {
+	public findAll(): Promise<ReportDetailsPersistence[]> {
 		return this.reportDao.findAll().catch(handleDatabaseError);
 	}
 
-	public async findById(id: number): Promise<Report | null> {
+	public findSortedPage(page: number = 0): Promise<ReportPagePersistence[]> {
+		return this.reportDao.findSortedPage(page).catch(handleDatabaseError);
+	}
+
+	public async findById(id: number): Promise<ReportDetails | null> {
 		const reportPersistence = await this.reportDao.findById(id).catch(handleDatabaseError);
 
 		if (reportPersistence == null) {
@@ -35,21 +42,36 @@ export class ReportService {
 			});
 		}
 
+		const user = await this.userService.findById(reportPersistence.user_id);
+
+		if (user == null) {
+			throw new ServiceError('Could not find user for report!', ServiceErrorCode.SERVER_ERROR);
+		}
+
 		return {
 			...reportPersistence,
-			files
+			files,
+			user
 		};
 	}
 
-	public findByUserId(userId: number): Promise<ReportPersistence[]> {
+	public findByUserId(userId: number): Promise<ReportDetailsPersistence[]> {
 		return this.reportDao.findByUserId(userId).catch(handleDatabaseError);
 	}
 
-	public async create(report: CreateReportRequest): Promise<ReportPersistence> {
+	public async create(report: CreateReportRequest): Promise<ReportDetailsPersistence> {
 		return this.reportDao.create(report).catch(handleDatabaseError);
 	}
 
 	public async addAddendum(req: CreateReportAddendumRequest): Promise<ReportAddendum> {
 		return this.reportDao.addAddendum(req).catch(handleDatabaseError);
+	}
+
+	public async toggleMarkedInteresting(id: number, userId: number): Promise<void> {
+		await this.reportDao.toggleMarkedInteresting(id, userId);
+	}
+
+	public async toggleMarkedValidated(id: number, userId: number): Promise<void> {
+		await this.reportDao.toggleMarkedValidated(id, userId);
 	}
 }

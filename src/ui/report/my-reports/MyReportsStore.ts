@@ -1,6 +1,6 @@
 import { observable, action, computed } from 'mobx';
 import { uiApiClient } from 'ui/common/uiApiClient';
-import { Report } from 'shared/ApiClient';
+import { ReportDetails } from 'shared/ApiClient';
 import { MyReportsPageComponentProps } from './MyReportsComponent';
 import { RouterStore } from '../../routing/RouterStore';
 
@@ -18,7 +18,7 @@ export class MyReportsStore {
 	) { }
 
 	@observable.ref
-	private myReports: Report[] = [];
+	private myReports: ReportDetails[] = [];
 
 	@action.bound
 	private async fetchMyReports() {

@@ -14,7 +14,7 @@ const classes = require('./NavBar.css');
 
 export interface NavBarComponentProps {
 	user: User | null;
-	login: (req: LoginRequest) => void;
+	isLoggedIn: boolean;
 	logout: () => void;
 	currentRoute?: string;
 }
@@ -29,9 +29,20 @@ export class NavBarComponent extends React.Component<NavBarComponentProps, NavBa
 		this.state = { drawerOpen: false };
 	}
 
+	componentDidUpdate(prevProps: NavBarComponentProps) {
+		if (prevProps.currentRoute !== this.props.currentRoute) {
+			this.closeDrawer();
+		}
+	}
+
 	render() {
+		const { currentRoute, user, isLoggedIn } = this.props;
+
+		if (!isLoggedIn) {
+			return null;
+		}
+
 		const { drawerOpen } = this.state;
-		const { currentRoute, user } = this.props;
 		const role = user ? user.role : '';
 		const navLinks = [];
 
@@ -73,7 +84,7 @@ export class NavBarComponent extends React.Component<NavBarComponentProps, NavBa
 		return (
 			<AppBar className={classes.navBar} title='Emerald Citizen' leftIcon='menu' onLeftIconClick={this.openDrawer} fixed={false}>
 				<Drawer className={classes.navBarDrawer} active={drawerOpen} onOverlayClick={this.closeDrawer}>
-					<List selectable={true} ripple={true}>
+					<List selectable={true} ripple={true} onClick={this.closeDrawer}>
 						{navLinks}
 					</List>
 				</Drawer>
@@ -104,9 +115,8 @@ export class NavBarComponent extends React.Component<NavBarComponentProps, NavBa
 export const NavBar = observer(() => {
 	const authStore = AuthStore.getInstance();
 	const routerStore = RouterStore.getInstance();
-
 	const props: NavBarComponentProps = {
-		login: authStore.login,
+		isLoggedIn: authStore.isLoggedIn,
 		logout: authStore.logout,
 		currentRoute: routerStore.route ? routerStore.route.name : undefined,
 		user: authStore.user

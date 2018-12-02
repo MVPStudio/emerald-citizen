@@ -1,8 +1,8 @@
 import listenersPlugin from 'router5/plugins/listeners';
 import browserPlugin from 'router5/plugins/browser';
 import { observable, action, computed } from 'mobx';
-import { createRouter, Router, State, Route } from 'router5';
-import { ComponentRoutes, ComponentRoute } from './routes';
+import { createRouter, Router, State } from 'router5';
+import { ComponentRoute } from './routes';
 
 export class RouterStore {
 	public static getInstance() {
@@ -10,7 +10,7 @@ export class RouterStore {
 	}
 
 	private static _instance: RouterStore;
-	private componentRoutes: ComponentRoutes;
+	private componentRoutes: ComponentRoute[];
 
 	constructor(
 		readonly router: Router = createRouter([], { allowNotFound: true, queryParamsMode: 'loose' })
@@ -18,10 +18,10 @@ export class RouterStore {
 			.usePlugin(listenersPlugin())
 	) { }
 
-	public start(routes: ComponentRoutes): this {
+	public start(routes: ComponentRoute[]): this {
 		this.componentRoutes = routes;
 		this.router
-			.add(this.componentRoutesToRoutes(this.componentRoutes))
+			.add(this.componentRoutes)
 			.start()
 			.subscribe(this.updateRoute);
 
@@ -48,25 +48,6 @@ export class RouterStore {
 	private updateRoute = ({ previousRoute, route }: { previousRoute?: State, route: State }) => {
 		this.route = route;
 		this.previousRoute = previousRoute;
-		this.componentRoute = this.componentRoutes[route.name];
-	}
-
-	// convert our custom route config to router 5 routes
-	private componentRoutesToRoutes(componentRoute?: ComponentRoutes): Route[] {
-		if (componentRoute == null) {
-			return [];
-		}
-
-		return Object.keys(componentRoute).reduce(
-			(flattenedRoutes: Route[], name: string) => {
-				const route = componentRoute[name];
-				const children = this.componentRoutesToRoutes(route.children);
-
-				flattenedRoutes.push({ name, path: route.path, children });
-
-				return flattenedRoutes;
-			},
-			[]
-		);
+		this.componentRoute = route ? this.componentRoutes.find(cr => cr.name === route.name) : undefined;
 	}
 }

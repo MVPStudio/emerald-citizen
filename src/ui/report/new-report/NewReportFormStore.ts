@@ -1,8 +1,8 @@
-import { observable, action, computed, runInAction } from 'mobx';
+import { observable, action, computed } from 'mobx';
 import { uiApiClient } from 'ui/common/uiApiClient';
-import { CreateReportRequest, CreatePersonRequest, PersonCategory, CreateVehicleRequest, MediaSignedUpload } from 'shared/ApiClient';
+import { CreateReportRequest, CreatePersonRequest, PersonCategory, CreateVehicleRequest } from 'shared/ApiClient';
 import { RouterStore } from 'ui/routing/RouterStore';
-import { NewReportFormProps } from './NewReportFormComponent';
+import { NewReportFormProps } from './NewReportForm';
 import { NewPersonFormProps } from './new-person/NewPersonFormComponent';
 import { GeoLocationComponentProps } from './geolocation/GeoLocationComponent';
 
@@ -118,20 +118,24 @@ export class NewReportFormStore {
 	@observable.ref
 	public fileUrls: string[] = [];
 
-	@action.bound
-	public async uploadFile(file: File) {
+	public uploadFile = async (file: File) => {
 		const { uploadData, getUrl } = (await this.apiClient.media.getSignedUpload()).data;
 		await this.apiClient.media.uploadFileToS3(uploadData.url, uploadData.fields, file);
-		runInAction(() => {
-			const files = this.report.files || [];
-			files.push({ filename: uploadData.fields.key });
-			this.updateReport({ files });
-			// wait a second to make sure upload finished
-			setTimeout(
-				() => this.fileUrls = this.fileUrls.concat(getUrl),
-				1000
-			);
+
+		this.updateFiles(uploadData.fields.key, getUrl);
+	}
+
+	@action
+	private updateFiles(filename: string, fileUrl: string) {
+		this.updateReport({
+			files: (this.report.files || []).concat({ filename })
 		});
+
+		// wait a second to make sure upload finished
+		setTimeout(
+			() => this.fileUrls = this.fileUrls.concat(fileUrl),
+			1000
+		);
 	}
 
 	/**

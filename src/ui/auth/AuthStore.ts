@@ -4,7 +4,6 @@ import { RouterStore } from 'ui/routing/RouterStore';
 import { User, LoginRequest, UserRole } from 'shared/ApiClient';
 
 export class AuthStore {
-
 	public static getInstance() {
 		return this._instance || (this._instance = new AuthStore());
 	}
@@ -14,27 +13,10 @@ export class AuthStore {
 	constructor(
 		private apiClient = uiApiClient,
 		private routerStore = RouterStore.getInstance()
-	) {
-		reaction(
-			() => {
-				const onAuthPage = this.routerStore.componentRoute != null && this.routerStore.componentRoute.auth;
-
-				return onAuthPage && !this.isLoggedIn && this.hasFetchedCurrentUser;
-			},
-			(redirect: boolean) => {
-				if (redirect) {
-					// HACK: router5 seems to need the current observable chain to finish before it can update the url again
-					setTimeout(() => this.routerStore.router.navigate('login'));
-				}
-			},
-			{
-				fireImmediately: true
-			}
-		);
-	}
+	) { }
 
 	@observable.ref
-	private hasFetchedCurrentUser = false;
+	public hasFetchedCurrentUser = false;
 
 	@observable.ref
 	public user: User | null;
@@ -56,27 +38,31 @@ export class AuthStore {
 
 			this.setUser(user);
 
-			this.routerStore.router.navigate(user.role === UserRole.reporter ? 'newReport' : 'reportsMap')
+			this.routerStore.router.navigate(user.role === UserRole.reporter ? 'newReport' : 'reportsTable')
 		} catch (e) {
 			this.loginFailed = true;
 		}
 	}
 
 	@action.bound
-	public async fetchCurrentUser() {
+	public async fetchCurrentUser(): Promise<boolean> {
+		this.hasFetchedCurrentUser = true;
 		const { data: user } = await this.apiClient.me.get();
 
 		this.setUser(user);
+
+		return user != null;
 	}
 
-	public readonly logout = async () => {
-		await this.apiClient.auth.logout();
-		this.user = null;
+	@action.bound
+	public logout() {
+		this.hasFetchedCurrentUser = false;
+		this.routerStore.router.navigate('index');
+		this.apiClient.auth.logout();
 	}
 
 	@action
 	private setUser(user: User | null) {
 		this.user = user;
-		this.hasFetchedCurrentUser = true;
 	}
 }

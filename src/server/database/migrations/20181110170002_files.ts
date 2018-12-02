@@ -10,7 +10,7 @@ exports.up = async (knex: Knex) => {
 		table.integer('report_id').unsigned().notNullable();
 		table.foreign('report_id').references('id').inTable('report');
 		table.string('filename').notNullable();
-		table.timestamp('created_at ').defaultTo(knex.fn.now());
+		table.timestamp('created_at').defaultTo(knex.fn.now());
 		table.timestamp('updated').defaultTo(knex.fn.now());
 	});
 };

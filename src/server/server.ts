@@ -8,6 +8,7 @@ import { join } from 'path';
 import * as csurf from 'csurf';
 import * as session from 'express-session';
 
+const cookieParser = require('cookie-parser');
 const lusca = require('lusca');
 
 export const shutdownServer = () => {
@@ -22,7 +23,6 @@ export const runServer = async () => {
 	 */
 	const publicDirectory = join(__dirname, '..', 'public');
 	const KnexSessionStore = require('connect-session-knex')(session);
-	const csrfProtection = csurf();
 	const server = express()
 		.set('view engine', 'pug')
 		.enable('view cache')
@@ -30,10 +30,12 @@ export const runServer = async () => {
 		.use(compression())
 		.use(lusca.xframe('SAMEORIGIN'))
 		.use(lusca.xssProtection(true))
+		.use(cookieParser())
+		.use(csurf({ cookie: true }))
 		.use(session({
 			secret: config.sessionSecret,
 			cookie: {
-				maxAge: 604800 // one week
+				maxAge: 604800000 // one week
 			},
 			store: new KnexSessionStore({
 				knex: getDbClientInstance(),
@@ -41,7 +43,6 @@ export const runServer = async () => {
 				createtable: true
 			})
 		}))
-		.use(csrfProtection)
 		.use(getApiRouter())
 		.get('/favicon.ico', (_, res) => res.end())
 		.use(express.static(publicDirectory))

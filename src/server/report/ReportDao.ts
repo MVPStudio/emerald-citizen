@@ -14,15 +14,28 @@ export class ReportDao {
 	public static addendumTableName = 'report_addendum';
 	public static fileTableName = 'report_file';
 
+	static reportSearchColumns = ['details', 'location']
+	static personSearchColumns = ['name', 'sex', 'details'];
+	static vehicleSearchColumns = ['make', 'model', 'color', 'license_plate', 'details'];
+	static addendumSearchColumns = ['text'];
+
 	constructor(
 		private dbClient: Knex = getDbClientInstance()
 	) { }
 
-	public async findAll(): Promise<ReportPersistence[]> {
+	public async findAll(): Promise<ReportDetailsPersistence[]> {
 		return this.dbClient(ReportDao.tableName).select('*');
 	}
 
-	public async findById(id: number): Promise<ReportPersistence | null> {
+	public async findSortedPage(page: number, limit: number = 50): Promise<ReportPagePersistence[]> {
+		return this.dbClient(ReportDao.tableName)
+			.select('*')
+			.orderBy('updated', 'DESC')
+			.offset(page * limit)
+			.limit(limit);
+	}
+
+	public async findById(id: number): Promise<ReportDetailsPersistence | null> {
 		const report = await this.dbClient(ReportDao.tableName)
 			.where({ id })
 			.first();
@@ -47,11 +60,11 @@ export class ReportDao {
 		};
 	}
 
-	public async findByUserId(userId: number): Promise<ReportPersistence[]> {
+	public async findByUserId(userId: number): Promise<ReportDetailsPersistence[]> {
 		return this.dbClient(ReportDao.tableName).select('*').where({ user_id: userId });
 	}
 
-	public async create(report: CreateReportPersistence): Promise<ReportPersistence> {
+	public async create(report: CreateReportPersistence): Promise<ReportDetailsPersistence> {
 		const id = await this.dbClient.transaction(async (trx) => {
 			const { people, vehicles, files, ...r } = report;
 			const savedReport = await this.dbClient(ReportDao.tableName)
@@ -86,11 +99,105 @@ export class ReportDao {
 	}
 
 	public async addAddendum(req: CreateReportAddendumPersistence) {
-		return this.dbClient(ReportDao.addendumTableName)
-			.insert(req)
-			.returning('*')
-			.get(0);
+		return await this.dbClient.transaction(async (trx) => {
+			const addendum = await this.dbClient(ReportDao.addendumTableName)
+				.transacting(trx)
+				.insert(req)
+				.returning('*')
+				.get(0);
+
+			await this.dbClient(ReportDao.tableName)
+				.transacting(trx)
+				.update({
+					updated: new Date()
+				})
+				.where({ id: req.report_id });
+
+			return addendum;
+		});
+
 	}
+
+	public async toggleMarkedInteresting(id: number, userId: number): Promise<void> {
+		const now = new Date();
+
+		await this.dbClient(ReportDao.tableName)
+			.update({
+				marked_interesting: this.dbClient.raw('NOT marked_interesting'),
+				marked_interesting_dt_tm: now,
+				marked_interesting_user_id: userId,
+				updated: now
+			})
+			.where({ id });
+	}
+
+	public async toggleMarkedValidated(id: number, userId: number): Promise<void> {
+		const now = new Date();
+
+		await this.dbClient(ReportDao.tableName)
+			.update({
+				marked_validated: this.dbClient.raw('NOT marked_validated'),
+				marked_validated_dt_tm: now,
+				marked_validated_user_id: userId,
+				updated: now
+			})
+			.where({ id });
+	}
+
+	// private searchTable(tableName: string, columns: string[], expression: string, select?: string) {
+	// 	return columns.reduce(
+	// 		(query, columnName, index) => {
+	// 			return query[index === 0 ? 'where' : 'orWhere'](
+	// 				columnName,
+	// 				'ILIKE',
+	// 				expression
+	// 			)
+	// 		},
+	// 		this.dbClient(tableName).select(select || '*')
+	// 	);
+	// }
+
+	// public async search(term: string): Promise<ReportDetailsPersistence[]> {
+	// 	const searchTermExpression = `%${term}%`;
+
+	// 	// tslint:disable max-line-length
+	// 	return this.searchTable(ReportDao.tableName, ReportDao.reportSearchColumns, searchTermExpression)
+	// 		.orWhereIn(
+	// 			'id',
+	// 			this.searchTable(ReportDao.addendumTableName, ReportDao.addendumSearchColumns, searchTermExpression, 'report_id')
+	// 		);
+	// 	// .orWhereIn(
+	// 	// 	'id',
+	// 	// 	this.dbClient
+	// 	// 		.select('report_id')
+	// 	// 		.from(ReportDao.addendumTableName)
+	// 	// 		.whereRaw(
+	// 	// 			this.dbClient.raw(`to_tsvector('english', text) @@ ${searchTermExpression}`)
+	// 	// 		)
+	// 	// )
+	// 	// .orWhereIn(
+	// 	// 	'id',
+	// 	// 	(builder) =>
+	// 	// 		builder.select('report_id')
+	// 	// 			.from(ReportDao.personTableName)
+	// 	// 			.where(
+	// 	// 				'to_tsvector('english', name || ' ' || age || ' ' || height || ' ' || weight || ' ' || hair_color || ' ' || hair_length || ' ' || eye_color || ' ' || skin_color || ' ' || sex || ' ' || details || ' ' || category)',
+	// 	// 				'@@',
+	// 	// 				searchTermExpression
+	// 	// 			)
+	// 	// )
+	// 	// .orWhereIn(
+	// 	// 	'id',
+	// 	// 	(builder) =>
+	// 	// 		builder.select('report_id')
+	// 	// 			.from(ReportDao.vehicleTableName)
+	// 	// 			.where(
+	// 	// 				'to_tsvector('english', make || ' ' || model || ' ' || color || ' ' || license_plate || ' ' || details)',
+	// 	// 				'@@',
+	// 	// 				searchTermExpression
+	// 	// 			)
+	// 	// )
+	// }
 }
 
 export interface CreateReportPersistence {
@@ -108,10 +215,24 @@ export interface CreateReportPersistence {
 
 export interface ReportPersistence extends CreateReportPersistence, TimestampedPersistence {
 	id: number;
+	marked_interesting: boolean;
+	marked_validated: boolean;
+	marked_interesting_dt_tm: Date;
+	marked_interesting_user_id: number;
+	marked_validated_dt_tm: Date;
+	marked_validated_user_id: number;
+}
+
+export interface ReportDetailsPersistence extends ReportPersistence {
 	people: PersonPersistence[];
 	vehicles: VehiclePersistence[];
 	files: FilePersistence[];
 	addendums: ReportAddendumPersistence[];
+}
+
+export interface ReportPagePersistence extends ReportPersistence {
+	last_addendum_dt_tm: Date;
+	sort_dt_tm: Date;
 }
 
 export interface CreateVehiclePersistence {
@@ -132,6 +253,12 @@ export enum PersonCategory {
 	victim = 'victim'
 }
 
+export enum PersonSex {
+	male = 'male',
+	female = 'female',
+	unsure = 'unsure'
+}
+
 export interface CreatePersonPersistence {
 	name: string | null;
 	height: string | null;
@@ -141,7 +268,7 @@ export interface CreatePersonPersistence {
 	hair_length: string | null;
 	eye_color: string | null;
 	skin_color: string | null;
-	sex: string | null;
+	sex: PersonSex | null;
 	details: string | null;
 	category: PersonCategory;
 }

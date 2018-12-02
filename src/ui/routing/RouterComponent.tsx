@@ -1,18 +1,12 @@
 import * as React from 'react';
-import { ComponentRoutes } from './routes';
+import { ComponentRoute } from './routes';
 
 export interface RouterComponentProps {
 	routeNames: string[];
-	routes: ComponentRoutes;
-	fetchCurrentUser: () => void;
-	isLoggedIn: boolean;
+	routes: ComponentRoute[];
 }
 
 export class RouterComponent extends React.Component<RouterComponentProps, {}> {
-	componentDidMount() {
-		this.props.fetchCurrentUser();
-	}
-
 	render() {
 		const { routeNames, routes } = this.props;
 
@@ -23,27 +17,26 @@ export class RouterComponent extends React.Component<RouterComponentProps, {}> {
 	 * Use the route names to look up and return the appropriate Component tree in the route configuration.
 	 *
 	 * @param routeNames
-	 * @param nestedRoute
+	 * @param children
 	 * @return Component
 	 */
-	routesToComponents(routeNames: string[], nestedRoute?: ComponentRoutes): JSX.Element | null {
-		if (nestedRoute == null || routeNames.length === 0) {
+	routesToComponents(routeNames: string[], children?: ComponentRoute[]): JSX.Element | null {
+		if (children == null || routeNames.length === 0) {
 			return null;
 		}
 
-		const route = nestedRoute[routeNames[0]];
+		const currentRouteName = routeNames[0];
+		const route = children.find(childRoute => childRoute.name === currentRouteName);
+
+		if (route == null) {
+			return <strong>{`Could not find matching components for route ${routeNames} at ${currentRouteName}`}</strong>;
+		}
+
 		const Component = route.component;
-		const { isLoggedIn } = this.props;
-		const hideUntilAuthenticated = route.auth && !isLoggedIn;
+		const nextRouteNames = routeNames.slice(1);
 
-		if (hideUntilAuthenticated) {
-			return null;
-		}
-
-		if (routeNames.length === 1) {
-			return <Component />;
-		}
-
-		return <Component>{this.routesToComponents(routeNames.slice(1), route.children)}</Component>;
+		return nextRouteNames.length === 0
+			? <Component />
+			: <Component>{this.routesToComponents(nextRouteNames, route.children)}</Component>;
 	}
 }

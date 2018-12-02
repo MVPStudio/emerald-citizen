@@ -20,7 +20,7 @@ export class ApiClient {
 
 	public readonly me = {
 		get: () => this.client.get<User | null>(this.meUrl),
-		reports: () => this.client.get<Report[]>(`${this.meUrl}/reports`),
+		reports: () => this.client.get<ReportDetails[]>(`${this.meUrl}/reports`),
 	}
 
 	public readonly users = {
@@ -32,11 +32,13 @@ export class ApiClient {
 	}
 
 	public readonly reports = {
-		find: () => this.client.get<Report[]>(this.usersUrl),
-		findById: (id: number) => this.client.get<Report | null>(`${this.reportsUrl}/${id}`),
-		create: (req: CreateReportRequest) => this.client.post<Report>(this.reportsUrl, req),
-		addAddendum: (id: number, text: string) => this.client.post<Report>(`${this.reportsUrl}/${id}/addendum`, { text }),
-		delete: (id: number) => this.client.delete(`${this.reportsUrl}/${id}`)
+		findSortedPage: (page?: number) => this.client.get<ReportPage[]>(this.reportsUrl, { params: { page } }),
+		findById: (id: number) => this.client.get<ReportDetails | null>(`${this.reportsUrl}/${id}`),
+		create: (req: CreateReportRequest) => this.client.post<ReportDetails>(this.reportsUrl, req),
+		addAddendum: (id: number, text: string) => this.client.post<ReportDetails>(`${this.reportsUrl}/${id}/addendum`, { text }),
+		delete: (id: number) => this.client.delete(`${this.reportsUrl}/${id}`),
+		toggleInteresting: (id: number) => this.client.post(`${this.reportsUrl}/${id}/toggle_interesting`),
+		toggleValidated: (id: number) => this.client.post(`${this.reportsUrl}/${id}/toggle_validated`)
 	}
 
 	public readonly media = {
@@ -55,8 +57,8 @@ export class ApiClient {
 }
 
 export interface Timestamped {
-	created_at: Date;
-	updated: Date;
+	created_at: Date | string;
+	updated: Date | string;
 }
 
 export interface HasId {
@@ -74,9 +76,11 @@ export interface CreateUserRequest {
 	role: UserRole;
 }
 
-export interface User extends CreateUserRequest, Timestamped {
+export interface User extends Timestamped {
 	id: number;
 	is_active: boolean;
+	username: string;
+	role: UserRole;
 }
 
 export enum UserRole {
@@ -100,10 +104,21 @@ export interface CreateReportRequest {
 
 export interface Report extends CreateReportRequest, Timestamped {
 	id: number;
+	marked_interesting: boolean;
+	marked_validated: boolean;
+}
+
+export interface ReportDetails extends Report {
 	people: Person[];
 	vehicles: Vehicle[];
 	addendums: ReportAddendum[];
 	files: ReportFile[];
+	user: User;
+}
+
+export interface ReportPage extends Report {
+	last_addendum_dt_tm: Date | string;
+	sort_dt_tm: Date | string;
 }
 
 export interface CreateVehicleRequest {
@@ -124,6 +139,12 @@ export enum PersonCategory {
 	victim = 'victim'
 }
 
+export enum PersonSex {
+	male = 'male',
+	female = 'female',
+	unsure = 'unsure'
+}
+
 export interface CreatePersonRequest {
 	name: string | null;
 	age: string | null;
@@ -133,7 +154,7 @@ export interface CreatePersonRequest {
 	hair_length: string | null;
 	eye_color: string | null;
 	skin_color: string | null;
-	sex: string | null;
+	sex: PersonSex | null;
 	details: string | null;
 	category: PersonCategory;
 }

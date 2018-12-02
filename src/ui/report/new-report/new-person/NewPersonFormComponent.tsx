@@ -32,7 +32,7 @@ export class NewPersonFormComponent extends React.Component<NewPersonFormProps> 
 					onChange={this.updateField('age')}
 					label='Age'
 					options={AGE_OPTIONS}
-					value={age + ''}
+					value={age || ''}
 				/>
 				<Select
 					onChange={this.updateField('sex')}

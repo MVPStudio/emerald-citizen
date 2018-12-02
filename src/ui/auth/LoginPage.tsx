@@ -34,13 +34,15 @@ export class LoginPageComponent extends React.Component<LoginPageComponentProps,
 				</div>
 				{loginFailed && <div className={classes.errors}>There was an error logging in.</div>}
 				<Input
-					value={this.state.username}
+					// @ts-ignore: autoFocus missing on type def
+					autoFocus={true}
+					value={username}
 					type='text'
 					label='Username'
 					onChange={(u: string) => this.setState({ username: u })}
 				/>
 				<Input
-					value={this.state.password}
+					value={password}
 					type='password'
 					label='Password'
 					onChange={(p: string) => this.setState({ password: p })}

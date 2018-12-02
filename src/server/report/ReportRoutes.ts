@@ -6,7 +6,7 @@ import { getSessionUserId } from '../lib/sessionUtils';
 export const getReportRoutes = (reportService = ReportService.getInstance()) =>
 	Router()
 		.get('', [
-			(_: Request, res: Response) => res.sendPromise(reportService.findAll())
+			(req: Request, res: Response) => res.sendPromise(reportService.findSortedPage(parseInt(req.query.page || 0, 10)))
 		])
 		.get('/:id', [
 			(req: Request, res: Response) => res.sendPromise(reportService.findById(parseInt(req.params.id, 10)))
@@ -26,5 +26,15 @@ export const getReportRoutes = (reportService = ReportService.getInstance()) =>
 				};
 
 				res.sendPromise(reportService.addAddendum(addendum));
+			}
+		])
+		.post('/:id/toggle_interesting', [
+			(req: Request, res: Response) => {
+				res.sendPromise(reportService.toggleMarkedInteresting(req.params.id, getSessionUserId(req)));
+			}
+		])
+		.post('/:id/toggle_validated', [
+			(req: Request, res: Response) => {
+				res.sendPromise(reportService.toggleMarkedValidated(req.params.id, getSessionUserId(req)));
 			}
 		]);

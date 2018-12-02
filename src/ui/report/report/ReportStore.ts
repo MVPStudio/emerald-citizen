@@ -1,8 +1,8 @@
 import { observable, action, computed } from 'mobx';
 import { uiApiClient } from 'ui/common/uiApiClient';
-import { Report, UserRole } from 'shared/ApiClient';
+import { ReportDetails, UserRole } from 'shared/ApiClient';
 import { RouterStore } from '../../routing/RouterStore';
-import { ReportPageComponentProps } from './ReportPageComponent';
+import { ReportPageProps } from './ReportPage';
 import { AuthStore } from '../../auth/AuthStore';
 
 export class MyReportsStore {
@@ -20,21 +20,26 @@ export class MyReportsStore {
 	) { }
 
 	@observable.ref
-	private report: Report | null = null;
+	private report: ReportDetails | null = null;
 
 	@observable.ref
 	private fetching = true;
 
 	@observable.ref
-	private canAddAddendum = false;
+	private disabled = true;
 
 	@observable.ref
-	private canMarkNotable = false
+	private canAddAddendum = false;
+
+	@computed
+	private get isAnalyst() {
+		return this.authStore.user && this.authStore.user.role === UserRole.analyst || false;
+	}
 
 	@action.bound
-	private async fetchReport() {
+	public async fetchReport() {
 		const id = this.routerStore.route && this.routerStore.route.params.id;
-		this.fetching = true;
+		this.fetching = this.report == null; // only set fetching once
 
 		if (id) {
 			const { data } = await this.apiClient.reports.findById(id);
@@ -42,30 +47,52 @@ export class MyReportsStore {
 
 			if (this.authStore.user != null && this.report != null) {
 				this.canAddAddendum = this.authStore.user.id === this.report.user_id;
-				this.canMarkNotable = this.authStore.user.role === UserRole.admin;
 			}
 		}
 
 		this.fetching = false;
+		this.disabled = false;
 	}
 
 	@action.bound
 	private async saveAddendum(text: string) {
 		if (this.report != null && text.length > 0) {
+			this.disabled = true;
 			await this.apiClient.reports.addAddendum(this.report.id, text);
 			await this.fetchReport();
 		}
 	}
 
+	@action.bound
+	public async toggleInteresting() {
+		if (this.report != null) {
+			this.disabled = true;
+			await this.apiClient.reports.toggleInteresting(this.report.id);
+			await this.fetchReport();
+		}
+	}
+
+	@action.bound
+	public async toggleValidated() {
+		if (this.report != null) {
+			this.disabled = true;
+			await this.apiClient.reports.toggleValidated(this.report.id);
+			await this.fetchReport();
+		}
+	}
+
 	@computed
-	public get props(): ReportPageComponentProps {
+	public get props(): ReportPageProps {
 		return {
 			report: this.report,
 			fetching: this.fetching,
+			disabled: this.disabled,
 			fetchReport: this.fetchReport,
 			canAddAddendum: this.canAddAddendum,
 			saveAddendum: this.saveAddendum,
-			canMarkNotable: this.canMarkNotable
+			isAnalyst: this.isAnalyst,
+			toggleInteresting: this.toggleInteresting,
+			toggleValidated: this.toggleValidated
 		}
 	}
 }

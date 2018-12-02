@@ -8,7 +8,7 @@ exports.up = async (knex: Knex) => {
 		table.string('password').notNullable();
 		table.string('role').notNullable();
 		table.boolean('is_active').notNullable().defaultTo(true);
-		table.timestamp('created_at ').defaultTo(knex.fn.now());
+		table.timestamp('created_at').defaultTo(knex.fn.now());
 		table.timestamp('updated').defaultTo(knex.fn.now());
 	});
 
@@ -22,7 +22,7 @@ exports.up = async (knex: Knex) => {
 		table.string('room_number').nullable();
 		table.float('geo_latitude').nullable();
 		table.float('geo_longitude').nullable();
-		table.timestamp('created_at ').defaultTo(knex.fn.now());
+		table.timestamp('created_at').defaultTo(knex.fn.now());
 		table.timestamp('updated').defaultTo(knex.fn.now());
 	});
 
@@ -41,7 +41,7 @@ exports.up = async (knex: Knex) => {
 		table.string('sex').nullable();
 		table.text('details').nullable();
 		table.enum('category', ['suspicious_person', 'victim', 'buyer']).nullable();
-		table.timestamp('created_at ').defaultTo(knex.fn.now());
+		table.timestamp('created_at').defaultTo(knex.fn.now());
 		table.timestamp('updated').defaultTo(knex.fn.now());
 	})
 
@@ -53,7 +53,7 @@ exports.up = async (knex: Knex) => {
 		table.string('model').nullable();
 		table.string('color').nullable();
 		table.string('license_plate').nullable();
-		table.timestamp('created_at ').defaultTo(knex.fn.now());
+		table.timestamp('created_at').defaultTo(knex.fn.now());
 		table.timestamp('updated').defaultTo(knex.fn.now());
 	})
 };
