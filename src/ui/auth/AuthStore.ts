@@ -29,9 +29,13 @@ export class AuthStore {
 	@observable.ref
 	public loginFailed: boolean = false;
 
+	@observable.ref
+	public loggingIn: boolean = false;
+
 	@action.bound
 	public async login(req: LoginRequest) {
 		this.loginFailed = false;
+		this.loggingIn = true;
 
 		try {
 			const { data: user } = await this.apiClient.auth.login(req);
@@ -42,6 +46,8 @@ export class AuthStore {
 		} catch (e) {
 			this.loginFailed = true;
 		}
+
+		this.loggingIn = false;
 	}
 
 	@action.bound

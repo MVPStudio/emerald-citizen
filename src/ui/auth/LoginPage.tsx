@@ -10,6 +10,7 @@ const classes = require('./LoginPage.css');
 interface LoginPageComponentProps {
 	login: (req: LoginRequest) => void;
 	loginFailed: boolean;
+	loggingIn: boolean;
 }
 
 interface LoginPageComponentState {
@@ -25,14 +26,14 @@ export class LoginPageComponent extends React.Component<LoginPageComponentProps,
 
 	render() {
 		const { username, password } = this.state;
-		const { loginFailed } = this.props;
+		const { loginFailed, loggingIn } = this.props;
 
 		return (
 			<form onSubmit={this.onSubmit} className={classes.loginPage}>
 				<div className={classes.logo}>
 					<img src='/static/EmeraldCitizen.svg' alt='Emerald Citizen logo' />
 				</div>
-				{loginFailed && <div className={classes.errors}>There was an error logging in.</div>}
+				<div className={classes.errors} style={{ visibility: loginFailed ? 'visible' : 'hidden' }}>There was an error logging in.</div>
 				<Input
 					// @ts-ignore: autoFocus missing on type def
 					autoFocus={true}
@@ -47,7 +48,7 @@ export class LoginPageComponent extends React.Component<LoginPageComponentProps,
 					label='Password'
 					onChange={(p: string) => this.setState({ password: p })}
 				/>
-				<Button type='submit' raised={true} primary={true}>Login</Button>
+				<Button type='submit' raised={true} primary={true} disabled={loggingIn}>Login</Button>
 			</form>
 		);
 	}
@@ -63,7 +64,8 @@ export const LoginPage = observer(() => {
 	const authState = AuthStore.getInstance();
 	const props = {
 		login: authState.login,
-		loginFailed: authState.loginFailed
+		loginFailed: authState.loginFailed,
+		loggingIn: authState.loggingIn
 	};
 
 	return <LoginPageComponent {...props} />;

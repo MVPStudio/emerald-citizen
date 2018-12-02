@@ -9,6 +9,10 @@ Parameters:
      Description: The database password
      Type: String
      Default: emcitemcit
+  SessionSecret:
+     Description: The session secret
+     Type: String
+     Default: emcitemcit
 
 Resources:
   # Create a logs group for our app
@@ -150,6 +154,8 @@ Resources:
               Value: !GetAtt PostgresDB.Endpoint.Address
             - Name: DATABASE_PASSWORD
               Value: !Ref DBPassword
+            - Name: SESSION_SECRET
+              Value: !Ref SessionSecret
             - Name: NODE_ENV
               Value: production
       Cpu: '256'
