@@ -160,43 +160,43 @@ export class ReportDao {
 	// public async search(term: string): Promise<ReportDetailsPersistence[]> {
 	// 	const searchTermExpression = `%${term}%`;
 
-	// 	// tslint:disable max-line-length
-	// 	return this.searchTable(ReportDao.tableName, ReportDao.reportSearchColumns, searchTermExpression)
-	// 		.orWhereIn(
-	// 			'id',
-	// 			this.searchTable(ReportDao.addendumTableName, ReportDao.addendumSearchColumns, searchTermExpression, 'report_id')
-	// 		);
-	// 	// .orWhereIn(
-	// 	// 	'id',
-	// 	// 	this.dbClient
-	// 	// 		.select('report_id')
-	// 	// 		.from(ReportDao.addendumTableName)
-	// 	// 		.whereRaw(
-	// 	// 			this.dbClient.raw(`to_tsvector('english', text) @@ ${searchTermExpression}`)
-	// 	// 		)
-	// 	// )
-	// 	// .orWhereIn(
-	// 	// 	'id',
-	// 	// 	(builder) =>
-	// 	// 		builder.select('report_id')
-	// 	// 			.from(ReportDao.personTableName)
-	// 	// 			.where(
-	// 	// 				'to_tsvector('english', name || ' ' || age || ' ' || height || ' ' || weight || ' ' || hair_color || ' ' || hair_length || ' ' || eye_color || ' ' || skin_color || ' ' || sex || ' ' || details || ' ' || category)',
-	// 	// 				'@@',
-	// 	// 				searchTermExpression
-	// 	// 			)
-	// 	// )
-	// 	// .orWhereIn(
-	// 	// 	'id',
-	// 	// 	(builder) =>
-	// 	// 		builder.select('report_id')
-	// 	// 			.from(ReportDao.vehicleTableName)
-	// 	// 			.where(
-	// 	// 				'to_tsvector('english', make || ' ' || model || ' ' || color || ' ' || license_plate || ' ' || details)',
-	// 	// 				'@@',
-	// 	// 				searchTermExpression
-	// 	// 			)
-	// 	// )
+	// tslint:disable max-line-length
+	// return this.searchTable(ReportDao.tableName, ReportDao.reportSearchColumns, searchTermExpression)
+	// 	.orWhereIn(
+	// 		'id',
+	// 		this.searchTable(ReportDao.addendumTableName, ReportDao.addendumSearchColumns, searchTermExpression, 'report_id')
+	// 	);
+	// .orWhereIn(
+	// 	'id',
+	// 	this.dbClient
+	// 		.select('report_id')
+	// 		.from(ReportDao.addendumTableName)
+	// 		.whereRaw(
+	// 			this.dbClient.raw(`to_tsvector('english', text) @@ ${searchTermExpression}`)
+	// 		)
+	// )
+	// .orWhereIn(
+	// 	'id',
+	// 	(builder) =>
+	// 		builder.select('report_id')
+	// 			.from(ReportDao.personTableName)
+	// 			.where(
+	// 				'to_tsvector('english', name || ' ' || age || ' ' || height || ' ' || weight || ' ' || hair_color || ' ' || hair_length || ' ' || eye_color || ' ' || skin_color || ' ' || sex || ' ' || details || ' ' || category)',
+	// 				'@@',
+	// 				searchTermExpression
+	// 			)
+	// )
+	// .orWhereIn(
+	// 	'id',
+	// 	(builder) =>
+	// 		builder.select('report_id')
+	// 			.from(ReportDao.vehicleTableName)
+	// 			.where(
+	// 				'to_tsvector('english', make || ' ' || model || ' ' || color || ' ' || license_plate || ' ' || details)',
+	// 				'@@',
+	// 				searchTermExpression
+	// 			)
+	// )
 	// }
 }
 
