@@ -1,6 +1,6 @@
 import { observable, action, computed, reaction, observe } from 'mobx';
 import { uiApiClient } from 'ui/common/uiApiClient';
-import { User } from 'shared/ApiClient';
+import { User, UserRole } from 'shared/ApiClient';
 import { RouterStore } from '../../routing/RouterStore';
 import { UsersTableProps } from './UsersTablePage';
 
@@ -60,6 +60,16 @@ export class UsersTableStore {
 		}
 	}
 
+	@action.bound
+	private async updateUserRole(id: number, role: UserRole) {
+		const confirmed = window.confirm(`Are you sure you want to update this user's role to ${role.toLowerCase()}?`);
+
+		if (confirmed) {
+			await this.apiClient.users.update({ id, role });
+			await this.fetchUsers();
+		}
+	}
+
 	@computed
 	public get props(): UsersTableProps {
 		return {
@@ -71,7 +81,8 @@ export class UsersTableStore {
 			users: this.users,
 			fetchUsers: this.fetchUsers,
 			deactivateUser: this.deactivateUser,
-			activateUser: this.activateUser
+			activateUser: this.activateUser,
+			updateUserRole: this.updateUserRole
 		}
 	}
 }

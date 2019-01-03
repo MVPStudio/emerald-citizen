@@ -22,11 +22,18 @@
 		position: fixed;
     top: 100px;
     right: 100px;
-		width: 150px;
+		width: 200px;
     padding: 15px 15px 0 15px;
 		
 		label {
 			cursor: pointer;
+			margin: 0;
+		}
+
+		.analystInfo {
+			margin-bottom: 10px;
+			font-size: 12px;
+			color: #666;
 		}
 	}
 

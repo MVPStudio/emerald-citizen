@@ -5,6 +5,7 @@ import Card from 'react-toolbox/lib/card';
 import Input from 'react-toolbox/lib/input';
 import Button from 'react-toolbox/lib/button';
 import Dropdown from 'react-toolbox/lib/dropdown';
+import { userRoleOptions } from 'ui/common/dropdownOptions';
 
 const classes = require('./NewUserPage.css');
 
@@ -42,7 +43,7 @@ export class NewUserPage extends React.Component<NewUserPageProps> {
 						<Dropdown
 							label='Role'
 							auto={false}
-							source={this.userRoleOptions}
+							source={userRoleOptions}
 							value={role}
 							onChange={this.updateFieldHandler('role')}
 						/>
@@ -52,8 +53,6 @@ export class NewUserPage extends React.Component<NewUserPageProps> {
 			</MobilePageContainer>
 		);
 	}
-
-	private userRoleOptions = Object.values(UserRole).map(value => ({ label: value, value }));
 
 	private updateFieldHandler = (name: string) => (value: string) => {
 		this.props.updateUser({ [name]: value });

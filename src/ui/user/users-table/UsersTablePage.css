@@ -4,13 +4,10 @@
 		color: #444;
 	}
 
-	tr {
-		cursor: pointer;
-	}
-
 	td {
 		button {
 			text-decoration: underline;
+			font-size: 12px;
 		}
 	}
 

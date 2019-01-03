@@ -1,6 +1,6 @@
 import { observable, action, computed } from 'mobx';
 import { uiApiClient } from 'ui/common/uiApiClient';
-import { ReportPage } from 'shared/ApiClient';
+import { Report } from 'shared/ApiClient';
 import { ReportsTablePageProps } from './ReportsTablePage';
 import { RouterStore } from '../../routing/RouterStore';
 
@@ -18,7 +18,7 @@ export class ReportsTableStore {
 	) { }
 
 	@observable.ref
-	private reports: ReportPage[] = [];
+	private reports: Report[] = [];
 
 	@computed get page(): number {
 		const { route } = this.routerStore;

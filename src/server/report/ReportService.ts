@@ -1,8 +1,16 @@
-import { ReportDao, ReportDetailsPersistence, ReportPagePersistence, ReportPersistence } from './ReportDao';
-import { CreateReportRequest, CreateReportAddendumRequest, ReportAddendum, ReportDetails, ReportFile } from 'shared/ApiClient';
+import { ReportDao, ReportDetailsPersistence, ReportPersistence } from './ReportDao';
+import {
+	CreateReportRequest,
+	CreateReportAddendumRequest,
+	ReportAddendum,
+	ReportDetails,
+	ReportFile,
+	SearchReportsRequest,
+	Report
+} from 'shared/ApiClient';
 import { handleDatabaseError } from '../lib/databaseUtils';
 import { MediaService } from 'server/media/MediaService';
-import { UserService } from 'server/user/UserService';
+import { UserService, SanitizedUser } from 'server/user/UserService';
 import { ServiceError, ServiceErrorCode } from 'server/lib/ServiceError';
 
 export class ReportService {
@@ -22,8 +30,15 @@ export class ReportService {
 		return this.reportDao.findAll().catch(handleDatabaseError);
 	}
 
-	public findSortedPage(page: number = 0): Promise<ReportPagePersistence[]> {
-		return this.reportDao.findSortedPage(page).catch(handleDatabaseError);
+	public async findSortedPage(page: number = 0): Promise<Report[]> {
+		const reports = await this.reportDao.findSortedPage(page).catch(handleDatabaseError);
+		const userIds = reports.map(report => report.user_id);
+		const users = await this.userService.findByIds(userIds);
+
+		return reports.map<Report>(report => ({
+			...report,
+			user: users.find(user => user.id === report.user_id) as SanitizedUser
+		}));
 	}
 
 	public async findById(id: number): Promise<ReportDetails | null> {
@@ -51,7 +66,9 @@ export class ReportService {
 		return {
 			...reportPersistence,
 			files,
-			user
+			user,
+			marked_interesting_user: await this.userService.findById(reportPersistence.marked_interesting_user_id),
+			marked_validated_user: await this.userService.findById(reportPersistence.marked_validated_user_id)
 		};
 	}
 
@@ -73,5 +90,9 @@ export class ReportService {
 
 	public async toggleMarkedValidated(id: number, userId: number): Promise<void> {
 		await this.reportDao.toggleMarkedValidated(id, userId);
+	}
+
+	public async searchReports(req: SearchReportsRequest) {
+		return this.reportDao.searchReports(req);
 	}
 }

@@ -37,4 +37,9 @@ export const getReportRoutes = (reportService = ReportService.getInstance()) =>
 			(req: Request, res: Response) => {
 				res.sendPromise(reportService.toggleMarkedValidated(req.params.id, getSessionUserId(req)));
 			}
+		])
+		.post('/search', [
+			(req: Request, res: Response) => {
+				res.sendPromise(reportService.searchReports(req.body));
+			}
 		]);

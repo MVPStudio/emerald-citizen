@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { User } from 'shared/ApiClient';
+import { User, UserRole } from 'shared/ApiClient';
 import { Table, TableHead, TableRow, TableCell } from 'react-toolbox/lib/table';
 import Card from 'react-toolbox/lib/card';
 import { Link } from 'ui/routing/Link';
 import Button from 'react-toolbox/lib/button';
+import { userRoleOptions } from 'ui/common/dropdownOptions';
 
 const classes = require('./UsersTablePage.css');
 
@@ -17,6 +18,7 @@ export interface UsersTableProps {
 	showPrevPage: boolean;
 	activateUser: (id: number) => void;
 	deactivateUser: (id: number) => void;
+	updateUserRole: (id: number, role: UserRole) => void;
 }
 
 export class UsersTable extends React.Component<UsersTableProps> {
@@ -51,7 +53,11 @@ export class UsersTable extends React.Component<UsersTableProps> {
 								<TableRow key={idx}>
 									<TableCell>{id}</TableCell>
 									<TableCell>{username}</TableCell>
-									<TableCell>{role}</TableCell>
+									<TableCell>
+										<select onChange={this.updateUserRoleHandler(id)}>
+											{userRoleOptions.map(({ value }) => <option key={value}>{value}</option>)}
+										</select>
+									</TableCell>
 									<TableCell>{(new Date(created_at)).toDateString()}</TableCell>
 									<TableCell>
 										<Link routeName='userUpdatePassword' routeParams={{ id }}>
@@ -103,4 +109,5 @@ export class UsersTable extends React.Component<UsersTableProps> {
 
 	private deactivateUserHandler = (id: number) => () => this.props.deactivateUser(id);
 	private activateUserHandler = (id: number) => () => this.props.activateUser(id);
+	private updateUserRoleHandler = (id: number) => (e: React.ChangeEvent<HTMLSelectElement>) => this.props.updateUserRole(id, e.target.value as UserRole);
 }

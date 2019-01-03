@@ -31,6 +31,12 @@ export class UserService {
 			.catch(handleDatabaseError);
 	}
 
+	public findByIds(ids: number[]): Promise<SanitizedUser[]> {
+		return this.userDao.findByIds(ids)
+			.then(users => users.map(this.sanitizeUser))
+			.catch(handleDatabaseError);
+	}
+
 	public findByUsername(username: string): Promise<SanitizedUser | null> {
 		return this.userDao.findByUsername(username)
 			.then(user => user ? this.sanitizeUser(user) : null)
@@ -59,7 +65,7 @@ export class UserService {
 
 		const password = userUpdate.password == null ? undefined : await this.createPasswordForDatabase(userUpdate.password);
 
-		return this.userDao
+		const user = await this.userDao
 			.update(
 				id,
 				{
@@ -67,8 +73,9 @@ export class UserService {
 					password
 				}
 			)
-			.catch(handleDatabaseError)
-			.then(this.sanitizeUser);
+			.catch(handleDatabaseError);
+
+		return this.sanitizeUser(user);
 	}
 
 	public async login({ username, password }: LoginRequest): Promise<SanitizedUser> {

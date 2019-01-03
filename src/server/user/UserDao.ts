@@ -26,6 +26,10 @@ export class UserDao {
 		return this.dbClient(UserDao.tableName).where({ id }).first();
 	}
 
+	public async findByIds(ids: number[]): Promise<UserPersistence[]> {
+		return this.dbClient(UserDao.tableName).whereIn('id', ids);
+	}
+
 	public async findByUsername(username: string): Promise<UserPersistence | null> {
 		return this.dbClient(UserDao.tableName).where({ username: username.toLowerCase() }).first();
 	}

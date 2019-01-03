@@ -63,6 +63,15 @@ export class NavBarComponent extends React.Component<NavBarComponentProps, NavBa
 				<Link key='navReportsTable' routeName='reportsTable'>
 					<ListItem caption='Reports' disabled={currentRoute === 'reportsTable'} />
 				</Link>,
+				<Link key='navSearchReports' routeName='reportsSearch'>
+					<ListItem caption='Search Reports' disabled={currentRoute === 'reportsSearch'} />
+				</Link>,
+				<Link key='navSearchPeople' routeName='peopleSearch'>
+					<ListItem caption='Search People' disabled={currentRoute === 'peopleSearch'} />
+				</Link>,
+				<Link key='navSearchVehicles' routeName='vehiclesSearch'>
+					<ListItem caption='Search Vehicles' disabled={currentRoute === 'vehiclesSearch'} />
+				</Link>,
 				<Link key='navReportsMap' routeName='reportsMap'>
 					<ListItem caption='Map' disabled={currentRoute === 'reportsMap'} />
 				</Link>
@@ -82,7 +91,7 @@ export class NavBarComponent extends React.Component<NavBarComponentProps, NavBa
 		}
 
 		return (
-			<AppBar className={classes.navBar} title='Emerald Citizen' leftIcon='menu' onLeftIconClick={this.openDrawer} fixed={false}>
+			<AppBar className={classes.navBar} leftIcon='menu' onLeftIconClick={this.openDrawer} fixed={false}>
 				<Drawer className={classes.navBarDrawer} active={drawerOpen} onOverlayClick={this.closeDrawer}>
 					<List selectable={true} ripple={true} onClick={this.closeDrawer}>
 						{navLinks}

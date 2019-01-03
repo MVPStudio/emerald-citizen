@@ -1,6 +1,5 @@
 import { v1 } from 'uuid';
 import { s3Client } from '../lib/awsClients';
-import { PresignedPost } from 'aws-sdk/clients/s3';
 import { config } from 'server/config';
 import { MediaSignedUpload } from 'shared/ApiClient';
 

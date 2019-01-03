@@ -121,7 +121,6 @@ export class NewReportForm extends React.Component<NewReportFormProps> {
 						getTitle={this.getVehicleTitle}
 					/>
 					<br/>
-					{fileUrls.map((url, index) => <div key={index}> <img src={url} width='500px' /> <br/></div>)}
 					<Input
 						multiline={true}
 						value={report.details}
@@ -132,6 +131,15 @@ export class NewReportForm extends React.Component<NewReportFormProps> {
 					/>
 					<br/>
 					<Input type='file' onChange={this.uploadFile}/>
+					<br/>
+					{fileUrls.map((url, index) => (
+							<div key={index}> 
+								<img src={url} width='500px' /> 
+								<br/>
+								<Input type='file' onChange={this.uploadFile}/>
+								<br/>
+							</div>
+					))}
 					<Button type='submit' label='Submit' raised={true} primary={true}/>
 				</form>
 			</Card>

@@ -1,5 +1,8 @@
 .navBar {
-	
+	nav {
+		width: 100%;
+		text-align: right;
+	}
 }
 
 .navBarDrawer {

@@ -32,13 +32,16 @@ export class ApiClient {
 	}
 
 	public readonly reports = {
-		findSortedPage: (page?: number) => this.client.get<ReportPage[]>(this.reportsUrl, { params: { page } }),
+		findSortedPage: (page?: number) => this.client.get<Report[]>(this.reportsUrl, { params: { page } }),
 		findById: (id: number) => this.client.get<ReportDetails | null>(`${this.reportsUrl}/${id}`),
 		create: (req: CreateReportRequest) => this.client.post<ReportDetails>(this.reportsUrl, req),
 		addAddendum: (id: number, text: string) => this.client.post<ReportDetails>(`${this.reportsUrl}/${id}/addendum`, { text }),
 		delete: (id: number) => this.client.delete(`${this.reportsUrl}/${id}`),
-		toggleInteresting: (id: number) => this.client.post(`${this.reportsUrl}/${id}/toggle_interesting`),
-		toggleValidated: (id: number) => this.client.post(`${this.reportsUrl}/${id}/toggle_validated`)
+		toggleInteresting: (id: number) => this.client.post<ReportDetails>(`${this.reportsUrl}/${id}/toggle_interesting`),
+		toggleValidated: (id: number) => this.client.post<ReportDetails>(`${this.reportsUrl}/${id}/toggle_validated`),
+		search: (req: SearchReportsRequest) => this.client.post<Report[]>(`${this.reportsUrl}/search`, req),
+		searchPeople: (req: SearchPeopleRequest) => this.client.post<Person[]>(`${this.reportsUrl}/search/people`, req),
+		searchVehicles: (req: SearchVehiclesRequest) => this.client.post<Vehicle[]>(`${this.reportsUrl}/search/vehicles`, req)
 	}
 
 	public readonly media = {
@@ -106,6 +109,9 @@ export interface Report extends CreateReportRequest, Timestamped {
 	id: number;
 	marked_interesting: boolean;
 	marked_validated: boolean;
+	marked_interesting_dt_tm: number;
+	marked_validated_dt_tm: number;
+	user: User;
 }
 
 export interface ReportDetails extends Report {
@@ -114,12 +120,19 @@ export interface ReportDetails extends Report {
 	addendums: ReportAddendum[];
 	files: ReportFile[];
 	user: User;
+	marked_interesting_user: User | null;
+	marked_validated_user: User | null;
 }
 
-export interface ReportPage extends Report {
-	last_addendum_dt_tm: Date | string;
-	sort_dt_tm: Date | string;
+export interface SearchReportsRequest {
+	location?: string;
+	details?: string;
+	marked_interesting?: boolean;
+	marked_validated?: boolean;
 }
+
+export type SearchPeopleRequest = Partial<CreatePersonRequest>;
+export type SearchVehiclesRequest = Partial<CreateVehicleRequest>;
 
 export interface CreateVehicleRequest {
 	make: string | null;

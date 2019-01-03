@@ -15,7 +15,19 @@ export class ReportDao {
 	public static fileTableName = 'report_file';
 
 	static reportSearchColumns = ['details', 'location']
-	static personSearchColumns = ['name', 'sex', 'details'];
+	static personSearchColumns = [
+		'name',
+		'height',
+		'age',
+		'weight',
+		'hair_color',
+		'hair_length',
+		'eye_color',
+		'skin_color',
+		'sex',
+		'details',
+		'category'
+	];
 	static vehicleSearchColumns = ['make', 'model', 'color', 'license_plate', 'details'];
 	static addendumSearchColumns = ['text'];
 
@@ -27,7 +39,7 @@ export class ReportDao {
 		return this.dbClient(ReportDao.tableName).select('*');
 	}
 
-	public async findSortedPage(page: number, limit: number = 50): Promise<ReportPagePersistence[]> {
+	public async findSortedPage(page: number, limit: number = 50): Promise<ReportDetailsPersistence[]> {
 		return this.dbClient(ReportDao.tableName)
 			.select('*')
 			.orderBy('updated', 'DESC')
@@ -144,18 +156,63 @@ export class ReportDao {
 			.where({ id });
 	}
 
-	// private searchTable(tableName: string, columns: string[], expression: string, select?: string) {
-	// 	return columns.reduce(
-	// 		(query, columnName, index) => {
-	// 			return query[index === 0 ? 'where' : 'orWhere'](
-	// 				columnName,
-	// 				'ILIKE',
-	// 				expression
-	// 			)
-	// 		},
-	// 		this.dbClient(tableName).select(select || '*')
-	// 	);
+	public async searchReports({ from_dt_tm, to_dt_tm, details, location, marked_interesting, marked_validated }: ReportSearchParams) {
+		const query = this.dbClient.select('*').from(ReportDao.tableName);
+
+		if (from_dt_tm) {
+			query.where('created_at', '>=', from_dt_tm)
+				.where('created_at', '<=', to_dt_tm || Date.now());
+		}
+
+		if (details != null) {
+			const detailsSearchTerm = `%${details}%`;
+
+			query.where('details', 'ILIKE', detailsSearchTerm)
+				.orWhereIn(
+					'id',
+					this.dbClient.select('report_id')
+						.from(ReportDao.addendumTableName)
+						.where('text', 'ILIKE', detailsSearchTerm)
+				);
+		}
+
+		if (location != null) {
+			query.where('location', 'ILIKE', `%${location}%`);
+		}
+
+		if (marked_interesting != null) {
+			query.where('marked_interesting', marked_interesting);
+		}
+
+		if (marked_validated != null) {
+			query.where('marked_validated', marked_validated);
+		}
+
+		return query;
+	}
+
+	// public async searchPeople(params: PersonSearchParams) {
+
 	// }
+
+	// public async searchVehicles(params: VehicleSearchParams) {
+
+	// }
+
+	private searchTableWithTerm(tableName: string, columns: string[], term: string, select: string = '*') {
+		const searchTermExpression = `%${term}%`;
+
+		return columns.reduce(
+			(query, columnName, index) => {
+				return query[index === 0 ? 'where' : 'orWhere'](
+					columnName,
+					'ILIKE',
+					searchTermExpression
+				)
+			},
+			this.dbClient(tableName).select(select)
+		);
+	}
 
 	// public async search(term: string): Promise<ReportDetailsPersistence[]> {
 	// 	const searchTermExpression = `%${term}%`;
@@ -217,9 +274,9 @@ export interface ReportPersistence extends CreateReportPersistence, TimestampedP
 	id: number;
 	marked_interesting: boolean;
 	marked_validated: boolean;
-	marked_interesting_dt_tm: Date;
+	marked_interesting_dt_tm: number;
 	marked_interesting_user_id: number;
-	marked_validated_dt_tm: Date;
+	marked_validated_dt_tm: number;
 	marked_validated_user_id: number;
 }
 
@@ -230,9 +287,13 @@ export interface ReportDetailsPersistence extends ReportPersistence {
 	addendums: ReportAddendumPersistence[];
 }
 
-export interface ReportPagePersistence extends ReportPersistence {
-	last_addendum_dt_tm: Date;
-	sort_dt_tm: Date;
+export interface ReportSearchParams {
+	from_dt_tm?: number;
+	to_dt_tm?: number;
+	location?: string;
+	details?: string;
+	marked_validated?: boolean;
+	marked_interesting?: boolean;
 }
 
 export interface CreateVehiclePersistence {
@@ -246,6 +307,8 @@ export interface VehiclePersistence extends CreateVehiclePersistence, Timestampe
 	id: number;
 	report_id: number;
 }
+
+export type VehicleSearchParams = Partial<CreateVehiclePersistence>;
 
 export enum PersonCategory {
 	suspicious_person = 'suspicious_person',
@@ -294,3 +357,5 @@ export interface CreateFilePersistence {
 export interface FilePersistence extends CreateFilePersistence, TimestampedPersistence {
 	id: number;
 }
+
+export type PersonSearchParams = Partial<CreatePersonPersistence>;

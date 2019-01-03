@@ -48,7 +48,14 @@ export class ReportPage extends React.Component<ReportPageProps, ReportPageState
 			return null;
 		}
 
-		const { marked_interesting, marked_validated } = report;
+		const {
+			marked_interesting,
+			marked_interesting_dt_tm,
+			marked_interesting_user,
+			marked_validated,
+			marked_validated_dt_tm,
+			marked_validated_user
+		} = report;
 
 		return (
 			<Card className={classes.analystActions}>
@@ -58,12 +65,20 @@ export class ReportPage extends React.Component<ReportPageProps, ReportPageState
 					checked={marked_interesting}
 					onChange={toggleInteresting}
 				/>
+				{
+					marked_interesting_user &&
+					<div className={classes.analystInfo}><p>{marked_interesting_user.username}</p><p>{(new Date(marked_interesting_dt_tm)).toDateString()}</p></div>
+				}
 				<Checkbox
 					disabled={disabled}
 					label='Validated'
 					checked={marked_validated}
 					onChange={toggleValidated}
 				/>
+				{
+					marked_validated_user &&
+					<div className={classes.analystInfo}><p>{marked_validated_user.username}</p><p>{(new Date(marked_validated_dt_tm)).toDateString()}</p></div>
+				}
 			</Card>
 		);
 	}
