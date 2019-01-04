@@ -7,11 +7,6 @@ const uiPath = path.resolve(srcPath, 'ui');
 module.exports = {
 	entry: path.resolve(uiPath, 'index.tsx'),
 	devtool: 'source-map',
-	optimization: {
-		splitChunks: {
-			chunks: 'all'
-		}
-	},
 	module: {
 		rules: [
 			{
