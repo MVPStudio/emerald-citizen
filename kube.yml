@@ -1,0 +1,27 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: emerald-citizen-deployment
+  labels:
+    app: emerald-citizen
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: emerald-citizen
+  template:
+    metadata:
+      labels:
+        app: emerald-citizen
+    spec:
+      containers:
+      - name: web-server
+        image: mvpstudio/emerald-citizen:78e35011151c6530eecb9e2231ada3b836701073
+        ports:
+        - containerPort: 8080
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1 
