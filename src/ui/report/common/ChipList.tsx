@@ -20,7 +20,7 @@ export const ChipList = ({ chips, onClick, color, icon, getTitle, display }: Chi
 			<div key={idx} className={classes.chip}>
 				<Chip onClick={onClick && (() => onClick(chip, idx))}>
 					<Avatar style={{ backgroundColor: color }} icon={icon} />
-					<span>{getTitle(chip)}</span>
+					<span>{idx + 1}: {getTitle(chip)}</span>
 				</Chip>
 			</div>
 		)}
