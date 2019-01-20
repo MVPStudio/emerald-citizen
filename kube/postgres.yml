@@ -1,2 +1,54 @@
 ---
-
+# Note: clusterIP is None because k8's *requires* a headless service
+# for a StatefulSet
+apiVersion: v1
+kind: Service
+metadata:
+  name: emerald-citizen-postgres
+  labels:
+    app: emerald-citizen-postgres
+spec:
+  ports:
+  - port: 5432
+    name: postgres
+  clusterIP: None
+  selector:
+    app: emerald-citizen-postgres
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: emerald-citizen-postgres-ss
+spec:
+  selector:
+    matchLabels:
+      app: emerald-citizen-postgres
+  serviceName: emerald-citizen-postgres
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: emerald-citizen-postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres
+        env:
+        - name: PGDATA
+          value: /data
+        - name: POSTGRES_PASSWORD
+          value: FROM_SECRET
+        ports:
+        - containerPort: 5432
+          name: postgres
+        volumeMounts:
+        - name: pgdata
+          mountPath: /datamount/data
+  volumeClaimTemplates:
+  - metadata:
+      name: pgdata
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 30Gi
