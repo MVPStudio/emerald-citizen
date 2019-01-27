@@ -16,7 +16,6 @@
 		"testWatch": "jest --config=jest.config.json --watch",
 		"create-migration": "knex migrate:make",
 		"rollback-migration": "DEBUG=knex:query,knex:bindings,knex:tx knex migrate:rollback",
-		"create-database": "ts-node -r tsconfig-paths/register ./src/server/database/setup/createDatabase",
 		"drop-database": "ts-node -r tsconfig-paths/register ./src/server/database/setup/dropDatabase"
 	},
 	"dependencies": {
@@ -69,7 +68,7 @@
 		"css-loader": "^1.0.0",
 		"html-webpack-plugin": "^2.29.0",
 		"jest": "^23.4.1",
-		"mobx": "^4.2.1",
+		"mobx": "^4.9.2",
 		"mobx-react": "^5.1.2",
 		"mobx-router5": "^4.1.1",
 		"nodemon": "^1.18.9",

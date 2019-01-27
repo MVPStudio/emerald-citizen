@@ -15,6 +15,7 @@ export interface NewReportFormProps {
 	fileUrls: string[];
 	updateReport: (update: Partial<CreateReportRequest>) => void;
 	saveReport: () => void;
+	resetReport: () => void;
 	navigateToNewPersonForm: (category: string) => void;
 	navigateToEditPersonForm: (id: number) => void;
 	navigateToNewVehicleForm: () => void;
@@ -24,7 +25,7 @@ export interface NewReportFormProps {
 
 export class NewReportForm extends React.Component<NewReportFormProps> {
 	render() {
-		const { report, fileUrls } = this.props;
+		const { report, fileUrls, resetReport } = this.props;
 		const people = report.people || [];
 		const vehicles = report.vehicles || [];
 		const date = moment(report.date ? parseInt(report.date, 10) : Date.now());
@@ -77,7 +78,7 @@ export class NewReportForm extends React.Component<NewReportFormProps> {
 					<GeoLocation/>
 					<Input
 						label='Room Number'
-						value={report.room_number}
+						value={report.room_number || ''}
 						onChange={this.setValueHandler('room_number')}
 					/>
 					<ChipField
@@ -123,7 +124,7 @@ export class NewReportForm extends React.Component<NewReportFormProps> {
 					<br/>
 					<Input
 						multiline={true}
-						value={report.details}
+						value={report.details || ''}
 						label='Incident Details'
 						hint='Please write everything you witness in as much detail as possible.
 									Any detail could help.'
@@ -140,7 +141,8 @@ export class NewReportForm extends React.Component<NewReportFormProps> {
 								<br/>
 							</div>
 					))}
-					<Button type='submit' label='Submit' raised={true} primary={true}/>
+					<Button label='Reset' raised={true} primary={false} onClick={resetReport}/>
+					<Button className={classes.submitButton} type='submit' label='Submit' raised={true} primary={true}/>
 				</form>
 			</Card>
 		);
@@ -151,8 +153,8 @@ export class NewReportForm extends React.Component<NewReportFormProps> {
 	}
 
 	private getNewPersonTitle = (person: CreatePersonRequest) => {
-		if (person.name) {
-			return name;
+		if (person.name && person.name.trim().length > 0) {
+			return person.name;
 		}
 
 		const items = Object.entries(person)
@@ -180,9 +182,9 @@ export class NewReportForm extends React.Component<NewReportFormProps> {
 				if (categoryIndex === index) {
 					id = i;
 					break;
-				} else {
-					categoryIndex++;
 				}
+				
+				categoryIndex++;
 			}
 		}
 

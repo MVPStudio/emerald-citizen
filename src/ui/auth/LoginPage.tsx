@@ -34,8 +34,10 @@ export class LoginPageComponent extends React.Component<LoginPageComponentProps,
 					<img src='/static/EmeraldCitizen.svg' alt='Emerald Citizen logo' />
 				</div>
 				<div className={classes.errors} style={{ visibility: loginFailed ? 'visible' : 'hidden' }}>There was an error logging in.</div>
+
+				{/* 
+			  // @ts-ignore: autoFocus missing on type def  */}
 				<Input
-					// @ts-ignore: autoFocus missing on type def
 					autoFocus={true}
 					value={username}
 					type='text'
