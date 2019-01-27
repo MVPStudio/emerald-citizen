@@ -3,9 +3,6 @@ FROM 937163516619.dkr.ecr.us-west-2.amazonaws.com/node:v1
 USER mvp
 WORKDIR /home/mvp/app
 
-# lint, compile, test, and build all the assets
-# RUN yarn build
-
 # move package to correct location
 COPY ./dist /home/mvp/app/
 RUN cd /home/mvp/app

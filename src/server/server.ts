@@ -20,6 +20,11 @@ export const shutdownServer = () => {
 
 export const runServer = async () => {
 	/**
+	 * Create database if needed.
+	 */
+	await createDatabase();
+
+	/**
 	 * Configure server.
 	 */
 	const publicDirectory = join(__dirname, '..', 'public');
@@ -52,11 +57,6 @@ export const runServer = async () => {
 	// this is required to make nodemon && concurrent actually stop the server process
 	process.on('SIGINT', shutdownServer);
 	process.on('SIGTERM', shutdownServer);
-
-	/**
-	 * Create database if needed.
-	 */
-	await createDatabase();
 
 	/**
 	 * Database migration.
