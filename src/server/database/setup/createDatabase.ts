@@ -10,6 +10,7 @@ export const createDatabase = async () => {
 			(e: Error) => {
 				if (e.message.indexOf('already exists') === -1) {
 					logger.error('Could not create database.', e)
+					throw new Error('Could not create database!');
 				} else {
 					logger.info('Database already created.');
 				}

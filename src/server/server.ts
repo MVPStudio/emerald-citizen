@@ -7,6 +7,7 @@ import { config } from './config';
 import { join } from 'path';
 import * as csurf from 'csurf';
 import * as session from 'express-session';
+import { createDatabase } from './database/setup/createDatabase';
 
 const cookieParser = require('cookie-parser');
 const lusca = require('lusca');
@@ -51,6 +52,11 @@ export const runServer = async () => {
 	// this is required to make nodemon && concurrent actually stop the server process
 	process.on('SIGINT', shutdownServer);
 	process.on('SIGTERM', shutdownServer);
+
+	/**
+	 * Create database if needed.
+	 */
+	await createDatabase();
 
 	/**
 	 * Database migration.
