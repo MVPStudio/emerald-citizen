@@ -7,7 +7,7 @@ WORKDIR /home/mvp/app
 # RUN yarn build
 
 # move package to correct location
-COPY build/dist /home/mvp/app/
+COPY ./dist /home/mvp/app/
 RUN cd /home/mvp/app
 
 # set correct node path for imports and run it

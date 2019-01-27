@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: web-server
-        image: mvpstudio/emerald-citizen:78e35011151c6530eecb9e2231ada3b836701073
+        image: mvpstudio/emerald-citizen:01cfcaa
         ports:
         - containerPort: 8080
         env: 
