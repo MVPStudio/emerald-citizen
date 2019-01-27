@@ -8,6 +8,7 @@ import { Select } from 'ui/common/components/Select';
 const classes = require('./NewVehicleForm.css');
 
 export interface NewVehicleFormProps {
+	isNew: boolean;
 	vehicle: Partial<CreateVehicleRequest>
 	updateVehicle: (update: Partial<CreateVehicleRequest>) => void;
 	saveVehicle: () => void;
@@ -18,12 +19,12 @@ export interface NewVehicleFormProps {
 export class NewVehicleForm extends React.Component<NewVehicleFormProps> {
 
 	render() {
-		const { allowSaveVehicle, vehicle, resetVehicle } = this.props;
+		const { isNew, allowSaveVehicle, vehicle, resetVehicle } = this.props;
 		const { make, model, color, license_plate } = vehicle;
 
 		return (
 			<form onSubmit={this.onSubmit} className={classes.personForm}>
-				<h1>Add Vehicle</h1>
+				<h1>{isNew ? 'Add' : 'Edit'} Vehicle</h1>
 				<Select options={VEHICLE_MAKE_OPTIONS} value={make} onChange={this.updateMake} />
 				<Select options={getVehiclesModelsByMake(make || '')} disabled={make == null || make.length === 0} value={model} onChange={this.updateField('model')} />
 				<Select options={VEHICLE_COLOR_OPTIONS} value={color} onChange={this.updateField('color')} />

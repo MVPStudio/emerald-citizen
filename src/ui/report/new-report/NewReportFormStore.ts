@@ -1,4 +1,4 @@
-import { observable, action, computed, observe, autorun } from 'mobx';
+import { observable, action, computed, IComputedValue, IObservableValue } from 'mobx';
 import { uiApiClient } from 'ui/common/uiApiClient';
 import { CreateReportRequest, CreatePersonRequest, PersonCategory, CreateVehicleRequest } from 'shared/ApiClient';
 import { RouterStore } from 'ui/routing/RouterStore';
@@ -7,7 +7,6 @@ import { NewPersonFormProps } from './new-person/NewPersonForm';
 import { GeoLocationComponentProps } from './geolocation/GeoLocationComponent';
 import { StorageFactory } from '../common/storageFactory';
 import { NewVehicleFormProps } from './new-vehicle/NewVehicleForm';
-import { State } from 'router5';
 
 const { geocodeByAddress } = require('react-places-autocomplete');
 
@@ -23,31 +22,8 @@ export class NewReportFormStore {
 		private apiClient = uiApiClient,
 		private routerStore = RouterStore.getInstance(),
 		private geolocation = window.navigator.geolocation,
-		private newReportStorage = StorageFactory.create<Partial<CreateReportRequest>>('newReport'),
-		private newVehicleStorage = StorageFactory.create<{ person: Partial<CreateVehicleRequest>, index: string }>('newVehicle'),
-		private newPersonStorage = StorageFactory.create<{ person: Partial<CreatePersonRequest>, index: string }>('newPerson')
-	) {
-		autorun(() => {
-			if (this.routerStore.route != null) {
-				const routeName = this.routerStore.route.name;
-				const routeId = this.routerStore.route.params.id;
-
-				if (routeName === 'newPerson') {
-					// get the last person edited
-					const { person, index } = newPersonStorage.get();
-
-					if (routeId === index) {
-						this.person = person;
-					} else {
-						// we landed on a new page, drop the old edits and start editing this person
-						// this will be called if the route is 'new' or a non integer value and default to an empy object
-						this.person = (this.report.get().people || [])[parseInt(routeId, 10)] || {};
-						newPersonStorage.set({ person: this.person, index: routeId });
-					}
-				}
-			}
-		});
-	}
+		private newReportStorage = StorageFactory.create<Partial<CreateReportRequest>>('newReport')
+	) { }
 
 	/**
 	 * Components Props
@@ -79,22 +55,20 @@ export class NewReportFormStore {
 		}
 	}
 
-	@computed
-	public get newPersonFormProps(): NewPersonFormProps {
-		return {
-			person: this.person,
-			updatePerson: this.updatePerson,
-			savePerson: this.savePerson,
-			resetPerson: this.resetPerson,
-			allowSavePerson: this.allowSavePerson,
-			personIndex: this.personIndex
-		};
-	}
+	public newPersonFormProps: IComputedValue<NewPersonFormProps> = computed(() => ({
+		person: this.editedPerson.get(),
+		updatePerson: this.updatePerson,
+		savePerson: this.savePerson,
+		resetPerson: this.resetPerson,
+		allowSavePerson: this.allowSavePerson,
+		personIndex: this.personNumberInCategory
+	}));
 
 	@computed
 	public get newVehicleFormProps(): NewVehicleFormProps {
 		return {
-			vehicle: this.vehicle,
+			isNew: this.focusedVehicleIsNew.get(),
+			vehicle: this.editedVehicle.get(),
 			updateVehicle: this.updateVehicle,
 			saveVehicle: this.saveVehicle,
 			resetVehicle: this.resetVehicle,
@@ -118,8 +92,6 @@ export class NewReportFormStore {
 		this.report.set({});
 		this.fileUrls = [];
 		this.newReportStorage.clear();
-		this.newPersonStorage.clear();
-		this.newVehicleStorage.clear();
 	}
 
 	@action.bound
@@ -136,14 +108,14 @@ export class NewReportFormStore {
 
 	@action.bound
 	private navigateToNewPersonForm(category: PersonCategory) {
-		this.person = { category };
-		this.routerStore.router.navigate('newPerson', { id: 'new' });
+		this.routerStore.router.navigate('newPerson', { id: 'new', category });
+		window.scrollTo(0, 0);
 	}
 
 	@action.bound
 	private navigateToEditPersonForm(id: number) {
-		this.person = (this.report.get().people || [])[id] || {};
 		this.routerStore.router.navigate('newPerson', { id });
+		window.scrollTo(0, 0);
 	}
 
 	/**
@@ -173,14 +145,64 @@ export class NewReportFormStore {
 	}
 
 	/**
-	 * New Person Form State
+	 * New/Edit Person Form State
 	 */
-	@observable.ref
-	private person: Partial<CreatePersonRequest>;
+	private focusedPersonIndex: IComputedValue<number | undefined> = computed(() => {
+		if (this.routerStore.route != null) {
+			const routeName = this.routerStore.route.name;
+			const idParam = this.routerStore.route.params.id;
+
+			if (routeName === 'newPerson' && !this.focusedPersonIsNew.get()) {
+				return parseInt(idParam, 10);
+			}
+		}
+	});
+
+	private focusedPersonIsNew: IComputedValue<boolean> = computed(() => {
+		if (this.routerStore.route != null) {
+			const routeName = this.routerStore.route.name;
+			const idParam = this.routerStore.route.params.id;
+
+			return routeName === 'newPerson' && idParam === 'new';
+		}
+
+		return false;
+	});
+
+	private newPersonCategory: IComputedValue<PersonCategory> = computed(() => {
+		if (this.routerStore.route != null && this.focusedPersonIsNew.get()) {
+			const routeName = this.routerStore.route.name;
+			const category = this.routerStore.route.params.category;
+
+			if (routeName === 'newPerson' && Object.values(PersonCategory).includes(category)) {
+				return category;
+			}
+		}
+
+		return PersonCategory.victim;
+	});
+
+	private focusedPerson: IComputedValue<Partial<CreatePersonRequest> | undefined> = computed(() => {
+		if (this.focusedPersonIsNew.get()) {
+			return { category: this.newPersonCategory.get() };
+		}
+
+		const personIndex = this.focusedPersonIndex.get();
+
+		if (personIndex != null) {
+			return (this.report.get().people || [])[personIndex];
+		}
+
+		return undefined;
+	});
+
+	private focusedPersonUpdates: IObservableValue<Partial<CreatePersonRequest>> = observable.box({});
+
+	private editedPerson: IComputedValue<Partial<CreatePersonRequest>> = computed(() => ({ ...this.focusedPerson.get(), ...this.focusedPersonUpdates.get() }));
 
 	@computed
-	private get personIndex() {
-		const personIndex = this.routerStore.route && this.routerStore.route.params.id;
+	private get personNumberInCategory() {
+		const personIndex = this.focusedPersonIndex.get();
 		const people = this.report.get().people;
 
 		if (personIndex != null && people != null) {
@@ -192,7 +214,7 @@ export class NewReportFormStore {
 				// search through each person in the same category until we find the person we are editing 
 				// 	to find what the persons index is in that category
 				people.forEach((p, idx) => {
-					if (idx !== personIndex && p.category === person.category) {
+					if (idx < personIndex && p.category === person.category) {
 						personIndexInCategory++;
 					}
 				});
@@ -206,66 +228,100 @@ export class NewReportFormStore {
 
 	@action.bound
 	private updatePerson(update: Partial<CreatePersonRequest>) {
-		this.person = { ...this.person, ...update };
-		this.newPersonStorage.set({ person: this.person, });
+		this.focusedPersonUpdates.set({ ...this.focusedPersonUpdates.get(), ...update });
 	}
 
-	@action.bound
-	private async savePerson() {
-		const person = this.person as CreatePersonRequest;
+	private savePerson = action(async () => {
+		const person = this.editedPerson.get() as CreatePersonRequest;
 		const people = this.report.get().people || [];
-		const index: string = this.routerStore.route && this.routerStore.route.params.id;
+		const personIndex = this.focusedPersonIndex.get();
 
-		if (index === 'new') {
+		if (this.focusedPersonIsNew.get()) {
 			people.push(person);
-		} else {
-			people[parseInt(index, 10)] = person;
+		} else if (personIndex != null) {
+			people[personIndex] = person;
 		}
 
 		this.updateReport({ people });
-
 		this.resetPerson();
 		this.routerStore.router.navigate('newReport')
-	}
+	});
 
 	@action.bound
 	private resetPerson() {
-		this.person = {};
-		this.newPersonStorage.clear();
+		this.focusedPersonUpdates.set({});
 	}
 
 	@computed
 	private get allowSavePerson() {
-		return Object.values(this.person).filter(item => item != null).length > 0;
+		return Object.values(this.focusedPersonUpdates.get()).filter(item => item != null).length > 0;
 	}
 
 	/**
-	 * New Vehicle Form State
+	 * New/Edit Vehicle Form State
 	 */
-	@observable.ref
-	private vehicle: Partial<CreateVehicleRequest> = this.newVehicleStorage.get();
+	private focusedVehicleIndex: IComputedValue<number | undefined> = computed(() => {
+		if (this.routerStore.route != null) {
+			const routeName = this.routerStore.route.name;
+			const idParam = this.routerStore.route.params.id;
+
+			if (routeName === 'newVehicle' && !this.focusedVehicleIsNew.get()) {
+				return parseInt(idParam, 10);
+			}
+		}
+
+		return undefined;
+	});
+
+	private focusedVehicleIsNew: IComputedValue<boolean> = computed(() => {
+		if (this.routerStore.route != null) {
+			const routeName = this.routerStore.route.name;
+			const idParam = this.routerStore.route.params.id;
+
+			return routeName === 'newVehicle' && idParam === 'new';
+		}
+
+		return false;
+	});
+
+	private focusedVehicle: IComputedValue<Partial<CreateVehicleRequest> | undefined> = computed(() => {
+		if (this.focusedVehicleIsNew.get()) {
+			return {};
+		}
+
+		const vehicleIndex = this.focusedVehicleIndex.get();
+
+		if (vehicleIndex != null) {
+			return (this.report.get().vehicles || [])[vehicleIndex];
+		}
+
+		return undefined;
+	});
+
+	private focusedVehicleUpdates: IObservableValue<Partial<CreateVehicleRequest>> = observable.box({});
+
+	private editedVehicle: IComputedValue<Partial<CreateVehicleRequest>> = computed(() => ({ ...this.focusedVehicle.get(), ...this.focusedVehicleUpdates.get() }));
 
 	@computed
 	private get allowSaveVehicle() {
-		return Object.values(this.vehicle).filter(item => item != null).length > 0;
+		return Object.values(this.focusedVehicleUpdates).filter(item => item != null).length > 0;
 	}
 
 	@action.bound
 	private updateVehicle(update: Partial<CreateVehicleRequest>) {
-		this.vehicle = { ...this.vehicle, ...update };
-		this.newVehicleStorage.set(this.vehicle);
+		this.focusedVehicleUpdates.set({ ...this.focusedVehicleUpdates.get(), ...update });
 	}
 
 	@action.bound
 	private async saveVehicle() {
-		const vehicle = this.vehicle as CreateVehicleRequest;
+		const vehicle = this.editedVehicle.get() as CreateVehicleRequest;
 		const vehicles = this.report.get().vehicles || [];
-		const index: string = this.routerStore.route && this.routerStore.route.params.id;
+		const index = this.focusedVehicleIndex.get();
 
-		if (index === 'new') {
+		if (this.focusedVehicleIsNew.get()) {
 			vehicles.push(vehicle);
-		} else {
-			vehicles[parseInt(index, 10)] = vehicle;
+		} else if (index != null) {
+			vehicles[index] = vehicle;
 		}
 
 		this.updateReport({ vehicles });
@@ -275,18 +331,19 @@ export class NewReportFormStore {
 
 	@action.bound
 	private resetVehicle() {
-		this.vehicle = {};
-		this.newVehicleStorage.clear();
+		this.focusedVehicleUpdates.set({});
 	}
 
 	@action.bound
 	private navigateToNewVehicleForm() {
 		this.routerStore.router.navigate('newVehicle', { id: 'new' });
+		window.scrollTo(0, 0);
 	}
 
 	@action.bound
 	private navigateToEditVehicleForm(id: number) {
 		this.routerStore.router.navigate('newVehicle', { id });
+		window.scrollTo(0, 0);
 	}
 
 	/**

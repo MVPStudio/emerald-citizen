@@ -21,10 +21,11 @@ export class NewPersonForm extends React.Component<NewPersonFormProps> {
 	render() {
 		const { allowSavePerson, person, resetPerson, personIndex } = this.props;
 		const { name, category, age, sex, hair_color, eye_color, height, weight, hair_length, skin_color, details } = person;
+		const categoryDisplay = (category || '').replace('_', ' ');
 
 		return (
 			<form onSubmit={this.onSubmit} className={classes.personForm}>
-				<h1>{personIndex == null ? 'Add Person' : `Edit ${(category || '').replace('_', ' ')} ${personIndex}`}</h1>
+				<h1>{personIndex == null ? `Add ${categoryDisplay}` : `Edit ${categoryDisplay} ${personIndex}`}</h1>
 				<Input
 					label='Name'
 					onChange={this.updateField('name')}

@@ -182,9 +182,9 @@ export class NewReportForm extends React.Component<NewReportFormProps> {
 				if (categoryIndex === index) {
 					id = i;
 					break;
-				} else {
-					categoryIndex++;
 				}
+				
+				categoryIndex++;
 			}
 		}
 
