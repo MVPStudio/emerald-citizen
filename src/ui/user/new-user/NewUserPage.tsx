@@ -26,8 +26,9 @@ export class NewUserPage extends React.Component<NewUserPageProps> {
 				<Card className={classes.newUserPage}>
 					<h1>New User</h1>
 					<form onSubmit={this.onSubmit}>
+						{/* 
+					  // @ts-ignore: autoFocus missing on type def */}
 						<Input
-							// @ts-ignore: autoFocus missing on type def
 							autoFocus={true}
 							label='Username'
 							hint='Must be at least 5 characters long'

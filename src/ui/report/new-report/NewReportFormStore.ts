@@ -156,6 +156,8 @@ export class NewReportFormStore {
 				return parseInt(idParam, 10);
 			}
 		}
+
+		return undefined;
 	});
 
 	private focusedPersonIsNew: IComputedValue<boolean> = computed(() => {

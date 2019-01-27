@@ -49,8 +49,9 @@ export class UpdatePasswordPage extends React.Component<UpdatePasswordPageProps>
 				<Card className={classes.updatePasswordPage}>
 					<form onSubmit={this.onSubmit}>
 						<p className={classes.header}>Update password for <strong>{username}</strong></p>
+						{/* 
+					  // @ts-ignore: autoFocus missing on type def */}
 						<Input
-							// @ts-ignore: autoFocus missing on type def
 							autoFocus={true}
 							label='New Password'
 							hint='Must be at least 5 characters long'
