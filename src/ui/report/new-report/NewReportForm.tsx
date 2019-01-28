@@ -21,11 +21,13 @@ export interface NewReportFormProps {
 	navigateToNewVehicleForm: () => void;
 	navigateToEditVehicleForm: (id: number) => void;
 	uploadFile: (file: File) => void;
+	fileUploading: boolean;
+	removeFile: (idx: number) => void;
 }
 
 export class NewReportForm extends React.Component<NewReportFormProps> {
 	render() {
-		const { report, fileUrls, resetReport } = this.props;
+		const { report, fileUrls, resetReport, fileUploading } = this.props;
 		const people = report.people || [];
 		const vehicles = report.vehicles || [];
 		const date = moment(report.date ? parseInt(report.date, 10) : Date.now());
@@ -34,11 +36,8 @@ export class NewReportForm extends React.Component<NewReportFormProps> {
 			<Card className={classes.reportForm}>
 				<form onSubmit={this.onSubmit}>
 					<h1><FontIcon value='note_add' /> Incident Report</h1>
-					<h5>
-						If you are witnessing an emergency situation, <br />
-						please <a href='tel:911'>call 911</a> immediately
-					</h5>
 					<Input
+						className={classes.dateInput}
 						label='Date of Incidence'
 						type='date'
 						onChange={(value: string) => {
@@ -58,6 +57,7 @@ export class NewReportForm extends React.Component<NewReportFormProps> {
 						value={date.format('YYYY-MM-DD')}
 					/>
 					<Input
+						className={classes.timeInput}
 						label='Time of Incidence'
 						type='time'
 						onChange={(value: string) => {
@@ -75,6 +75,7 @@ export class NewReportForm extends React.Component<NewReportFormProps> {
 						}}
 						value={date.format('HH:mm')}
 					/>
+					<div style={{clear: 'both'}}/>
 					<GeoLocation/>
 					<Input
 						label='Room Number'
@@ -131,17 +132,27 @@ export class NewReportForm extends React.Component<NewReportFormProps> {
 						onChange={this.setValueHandler('details')}
 					/>
 					<br/>
-					<Input type='file' onChange={this.uploadFile}/>
-					<br/>
 					{fileUrls.map((url, index) => (
-							<div key={index}> 
+							<div className={classes.uploadedFile} key={index}> 
 								<img src={url} width='500px' /> 
-								<br/>
-								<Input type='file' onChange={this.uploadFile}/>
-								<br/>
+								<Button 
+									className={classes.removeFileButton}
+									label='Remove' 
+									raised={true}
+									accent={true}
+									mini={true}
+									onClick={this.removeFileHandler(index)}
+								/>
 							</div>
 					))}
-					<Button label='Reset' raised={true} primary={false} onClick={resetReport}/>
+					<div className={classes.fileUploadButton}>
+						{ 
+							fileUploading 
+								? <h3>Uploading...</h3>
+								: <Input type='file' onChange={this.uploadFile}/>
+						}
+					</div>
+					<Button label='Reset' raised={true} accent={true} onClick={resetReport}/>
 					<Button className={classes.submitButton} type='submit' label='Submit' raised={true} primary={true}/>
 				</form>
 			</Card>
@@ -151,6 +162,8 @@ export class NewReportForm extends React.Component<NewReportFormProps> {
 	private uploadFile = (_: string, e: any) => {
 		this.props.uploadFile(e.target.files[0]);
 	}
+
+	private removeFileHandler = (index: number) => () => this.props.removeFile(index);
 
 	private getNewPersonTitle = (person: CreatePersonRequest) => {
 		if (person.name && person.name.trim().length > 0) {

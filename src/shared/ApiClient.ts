@@ -139,6 +139,7 @@ export interface CreateVehicleRequest {
 	model: string | null;
 	color: string | null;
 	license_plate: string | null;
+	details: string | null;
 }
 
 export interface Vehicle extends CreateVehicleRequest, Timestamped {

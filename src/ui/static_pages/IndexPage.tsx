@@ -9,7 +9,10 @@ export const IndexPage = () => (
 		<div className={classes.logo}>
 			<img src='/static/EmeraldCitizen.svg' alt='Emerald Citizen logo' />
 			<p>
-				<Link routeName='login'><Button raised={true} label='Login' primary={true}/></Link>
+				<a className={classes.aboutLink} href='https://havenoregon.org/emerald-citizen/'>
+					<Button raised={true} label='Learn More' secondary={true} />
+				</a>
+				<Link routeName='login'><Button raised={true} label='Login' primary={true} /></Link>
 			</p>
 		</div>
 	</div>

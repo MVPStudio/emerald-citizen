@@ -22,27 +22,27 @@ export class NewReportFormStore {
 		private apiClient = uiApiClient,
 		private routerStore = RouterStore.getInstance(),
 		private geolocation = window.navigator.geolocation,
-		private newReportStorage = StorageFactory.create<Partial<CreateReportRequest>>('newReport')
+		private newReportStorage = StorageFactory.create<Partial<CreateReportRequest>>('newReport', {}),
+		private fileUrlsStorage = StorageFactory.create<string[]>('fileUrls', [])
 	) { }
 
 	/**
 	 * Components Props
 	 */
-	@computed
-	public get newReportFormProps(): NewReportFormProps {
-		return {
-			report: this.report.get(),
-			fileUrls: this.fileUrls,
-			updateReport: this.updateReport,
-			saveReport: this.saveReport,
-			resetReport: this.resetReport,
-			navigateToNewPersonForm: this.navigateToNewPersonForm,
-			navigateToEditPersonForm: this.navigateToEditPersonForm,
-			navigateToNewVehicleForm: this.navigateToNewVehicleForm,
-			navigateToEditVehicleForm: this.navigateToEditVehicleForm,
-			uploadFile: this.uploadFile
-		};
-	}
+	public newReportFormProps: IComputedValue<NewReportFormProps> = computed(() => ({
+		report: this.report.get(),
+		fileUrls: this.fileUrls,
+		updateReport: this.updateReport,
+		saveReport: this.saveReport,
+		resetReport: this.resetReport,
+		navigateToNewPersonForm: this.navigateToNewPersonForm,
+		navigateToEditPersonForm: this.navigateToEditPersonForm,
+		navigateToNewVehicleForm: this.navigateToNewVehicleForm,
+		navigateToEditVehicleForm: this.navigateToEditVehicleForm,
+		uploadFile: this.uploadFile,
+		fileUploading: this.fileUploading.get(),
+		removeFile: this.removeFile
+	}));
 
 	@computed
 	public get geoLocationProps(): GeoLocationComponentProps {
@@ -83,27 +83,30 @@ export class NewReportFormStore {
 
 	@action.bound
 	private updateReport(update: Partial<CreateReportRequest>) {
-		this.report.set({ ...this.report, ...update });
-		this.newReportStorage.set(this.report.get());
+		const updatedReport = { ...this.report.get(), ...update };
+		this.report.set(updatedReport);
+		this.newReportStorage.set(updatedReport);
 	}
 
 	@action.bound
 	private resetReport() {
 		this.report.set({});
-		this.fileUrls = [];
 		this.newReportStorage.clear();
+		this.fileUrls = [];
+		this.fileUrlsStorage.clear();
+		window.scrollTo(0, 0);
 	}
 
 	@action.bound
 	private async saveReport() {
 		await this.apiClient.reports.create({
-			...this.report,
+			...this.report.get(),
 			user_id: 1,
 			date: this.report.get().date || this.apiClient.now()
 		});
 
 		this.resetReport();
-		this.routerStore.router.navigate('newReportSuccess')
+		this.routerStore.router.navigate('newReportSuccess');
 	}
 
 	@action.bound
@@ -122,27 +125,48 @@ export class NewReportFormStore {
 	 * Files state
 	 */
 	@observable.ref
-	public fileUrls: string[] = [];
+	private fileUrls: string[] = this.fileUrlsStorage.get();
 
-	public uploadFile = async (file: File) => {
-		const { uploadData, getUrl } = (await this.apiClient.media.getSignedUpload()).data;
-		await this.apiClient.media.uploadFileToS3(uploadData.url, uploadData.fields, file);
+	private fileUploading = observable.box(false);
 
-		this.updateFiles(uploadData.fields.key, getUrl);
-	}
+	private uploadFile = action(async (file: File) => {
+		this.fileUploading.set(true);
 
-	@action
-	private updateFiles(filename: string, fileUrl: string) {
+		try {
+			const { uploadData, getUrl } = (await this.apiClient.media.getSignedUpload()).data;
+			await this.apiClient.media.uploadFileToS3(uploadData.url, uploadData.fields, file);
+
+			this.updateFiles(uploadData.fields.key, getUrl);
+		} catch (e) {
+			console.error(e); // tslint:disable-line:no-console
+			this.fileUploading.set(false);
+		}
+	});
+
+	private updateFiles = action((filename: string, fileUrl: string) => {
 		this.updateReport({
 			files: (this.report.get().files || []).concat({ filename })
 		});
 
 		// wait a second to make sure upload finished
 		setTimeout(
-			() => this.fileUrls = this.fileUrls.concat(fileUrl),
+			() => {
+				const updatedFileUrls = this.fileUrls.concat(fileUrl);
+				this.fileUrls = updatedFileUrls;
+				this.fileUrlsStorage.set(updatedFileUrls);
+				this.fileUploading.set(false);
+			},
 			1000
 		);
-	}
+	});
+
+	private removeFile = action((fileIndex: number) => {
+		const updatedFileUrls = Array.from(this.fileUrls);
+
+		updatedFileUrls.splice(fileIndex, 1);
+		this.fileUrls = updatedFileUrls;
+		this.fileUrlsStorage.set(updatedFileUrls);
+	});
 
 	/**
 	 * New/Edit Person Form State

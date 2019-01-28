@@ -2,11 +2,15 @@
 	.logo {
 		position: relative;
 		text-align: center;
-		margin: 25% auto;
+		margin: 150px auto 0 auto;
 
 		img {
 			width: 95%;
 			max-width: 400px;
 		}
+	}
+
+	.aboutLink {
+		margin: 0 15px 0 0;
 	}
 }

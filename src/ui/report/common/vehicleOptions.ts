@@ -5,9 +5,19 @@
 // ]
 
 export const VEHICLE_COLOR_OPTIONS = [
+	'black',
 	'blue',
+	'brown',
+	'gold',
+	'green',
+	'grey',
+	'orange',
 	'red',
-	'yellow'
+	'silver',
+	'yellow',
+	'white',
+	'multi-colored',
+	'other'
 ].sort();
 
 export const VEHICLE_MAKES_MODELS: Record<string, string[]> = {

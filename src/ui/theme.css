@@ -1,6 +1,7 @@
 :root {
 	--color-primary: var(--palette-green-800);
 	--color-primary-dark: var(--palette-green-900);
+	--input-text-bottom-border-color: var(--palette-green-800);
 }
 
 :global(body) {

@@ -73,7 +73,10 @@ export class ReportDao {
 	}
 
 	public async findByUserId(userId: number): Promise<ReportDetailsPersistence[]> {
-		return this.dbClient(ReportDao.tableName).select('*').where({ user_id: userId });
+		return this.dbClient(ReportDao.tableName)
+			.select('*')
+			.where({ user_id: userId })
+			.orderBy('updated', 'DESC');
 	}
 
 	public async create(report: CreateReportPersistence): Promise<ReportDetailsPersistence> {
@@ -301,6 +304,7 @@ export interface CreateVehiclePersistence {
 	model: string | null;
 	color: string | null;
 	license_plate: string | null;
+	details: string | null;
 }
 
 export interface VehiclePersistence extends CreateVehiclePersistence, TimestampedPersistence {

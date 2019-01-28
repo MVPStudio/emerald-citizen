@@ -4,5 +4,5 @@ import { NewReportFormStore } from './NewReportFormStore';
 import { NewReportForm } from './NewReportForm';
 
 export const NewReportFormContainer = observer(() =>
-	<NewReportForm {...NewReportFormStore.getInstance().newReportFormProps} />
+	<NewReportForm {...NewReportFormStore.getInstance().newReportFormProps.get()} />
 );

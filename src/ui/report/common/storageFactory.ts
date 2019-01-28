@@ -59,12 +59,13 @@ try {
 export class StorageItem<T> {
 	constructor(
 		private key: string,
-		private storage: Storage
+		private storage: Storage,
+		private defaultValue?: T
 	) { }
 
 	public get(): T {
 		const item = this.storage.getItem(this.key);
-		return item == null ? {} : JSON.parse(item);
+		return item == null ? this.defaultValue : JSON.parse(item);
 	}
 
 	public set(value: T) {
@@ -77,7 +78,7 @@ export class StorageItem<T> {
 }
 
 export class StorageFactory {
-	static create<T>(key: string): StorageItem<T> {
-		return new StorageItem<T>(`emcit.${key}`, globalStorage)
+	static create<T>(key: string, defaultValue?: T): StorageItem<T> {
+		return new StorageItem<T>(`emcit.${key}`, globalStorage, defaultValue)
 	}
 }

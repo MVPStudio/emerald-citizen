@@ -2,7 +2,9 @@
 	"ignore": [
 		".git",
 		"node_modules",
-		"build"
+		"build",
+		"./src/public",
+		"./src/ui"
 	],
 	"watch": [
 		"./src/server",

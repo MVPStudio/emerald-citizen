@@ -100,6 +100,7 @@ export class NavBarComponent extends React.Component<NavBarComponentProps, NavBa
 				{
 					user &&
 					<Navigation type='horizontal'>
+						<Button raised={true} accent={true} onClick={this.call911} label='911' />
 						<Button disabled={true}>{user.username}</Button>
 						<Button raised={true} onClick={this.handleLogout} label='Logout' />
 					</Navigation>
@@ -118,6 +119,10 @@ export class NavBarComponent extends React.Component<NavBarComponentProps, NavBa
 
 	private closeDrawer = () => {
 		this.setState({ drawerOpen: false });
+	}
+
+	private call911 = () => {
+		window.open('tel:911');
 	}
 }
 

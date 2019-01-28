@@ -2,37 +2,58 @@
 	padding: 15px;
 
 	h1 {
-			letter-spacing: 3px;
-			color: #394648;
-			span {
-					font-size: 1.5em;
-					margin-right: 5px;
-					bottom: -.2em;
-					position: relative;
-			}
+		letter-spacing: 3px;
+		color: #394648;
+		margin: 0 0 30px 0;
+		span {
+			font-size: 1.5em;
+			margin-right: 5px;
+			bottom: -.2em;
+			position: relative;
+		}
 	}
 
 	h5 {
-			text-align: center;
-			text-transform: uppercase;
-			letter-spacing: 1px;
-			color: #999;
-			max-width: 400px;
-			margin: 45px auto;
+		text-align: center;
+		text-transform: uppercase;
+		letter-spacing: 1px;
+		color: #999;
+		max-width: 400px;
+		margin: 45px auto;
 
-			a {
-					color: #9C1A1C;
-			}
+		a {
+			color: #9C1A1C;
+		}
 	}
 
 	textarea {
-			min-height: 100px;
-			padding-right: 5px;
-			resize: vertical;
-			font-family: 'Oxygen', sans-serif;
+		min-height: 100px;
+		padding-right: 5px;
+		resize: vertical;
+		font-family: 'Oxygen', sans-serif;
 	}
 
 	.submitButton {
-			float: right;
+		float: right;
+	}
+
+	.removeFileButton {
+		margin: 10px 0;
+	}
+
+	.fileUploadButton {
+		margin: 10px 0 50px 0;
+	}
+
+	.dateInput, .timeInput {
+		width: 49%;
+	}
+
+	.dateInput {
+		float: left;
+	} 
+
+	.timeInput {
+		float: right;
 	}
 }

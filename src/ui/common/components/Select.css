@@ -5,8 +5,8 @@
 	select {
 		width: 100%;
 		padding: 10px;
-		border: none;
 		margin: 10px 0 0 0;
+		border: 1px solid var(--input-text-bottom-border-color);
 	}
 
 	label {
