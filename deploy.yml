@@ -137,7 +137,7 @@ Resources:
       ContainerDefinitions:
         - Name: emerald-citizen
           Image: !Sub
-            - 937163516619.dkr.ecr.us-west-2.amazonaws.com/emerald-citizen:${Cluster}
+            - mvpstudio/emerald-citizen:${Cluster}
             - { cluster: !Ref Cluster }
           PortMappings:
             - ContainerPort: 8080
