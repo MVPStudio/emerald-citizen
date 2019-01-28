@@ -3,6 +3,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: emerald-citizen-postgres
+  namespace: emerald-citizen
   labels:
     app: emerald-citizen-postgres
 spec:
@@ -16,6 +17,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: emerald-citizen-postgres-deploy
+  namespace: emerald-citizen
 spec:
   selector:
     matchLabels:
@@ -29,6 +31,13 @@ spec:
       containers:
       - name: postgres
         image: postgres
+        resources:
+           limits:
+              cpu: 0.25
+              memory: 250Mi
+           requests:
+              cpu: 0.25
+              memory: 250Mi
         env:
         - name: PGDATA
           value: /data
