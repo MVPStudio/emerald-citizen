@@ -29,7 +29,8 @@ describe('analysts', () => {
 				make: 'make',
 				model: 'model',
 				color: 'color',
-				license_plate: 'license_plate'
+				license_plate: 'license_plate',
+				details: 'details'
 			}]
 		};
 		await testsClient.reports.create(reportReq);

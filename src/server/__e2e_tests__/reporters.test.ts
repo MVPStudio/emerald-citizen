@@ -29,7 +29,8 @@ describe('reporters', () => {
 				make: 'make',
 				model: 'model',
 				color: 'color',
-				license_plate: 'license_plate'
+				license_plate: 'license_plate',
+				details: 'details'
 			}]
 		};
 
