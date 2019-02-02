@@ -1,14 +1,16 @@
-import { testsClient } from './testsClient';
+import { createTestClient, loginAsReporter } from './testsClient';
 import { CreateReportRequest, PersonSex, PersonCategory } from 'shared/ApiClient';
 
 describe('reporters', () => {
 
 	it('should be able to create a report', async () => {
-		const { data: user } = await testsClient.auth.login({ username: 'reporter', password: 'reporter' });
+		const client = createTestClient();
+
+		const { data: user } = await loginAsReporter(client);
 
 		const reportReq: CreateReportRequest = {
 			user_id: user.id,
-			date: testsClient.now(),
+			date: client.now(),
 			location: 'location',
 			room_number: 'room_number',
 			details: 'some serious details...',
@@ -34,7 +36,7 @@ describe('reporters', () => {
 			}]
 		};
 
-		const { data: report } = await testsClient.reports.create(reportReq);
+		const { data: report } = await client.reports.create(reportReq);
 
 		expect(report).toMatchObject(reportReq);
 	});

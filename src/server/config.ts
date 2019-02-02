@@ -15,6 +15,7 @@ const workerCount = getEnvNumber('WORKER_COUNT') || cpus().length;
 export const config = {
 	isDevelopment: process.env.NODE_ENV === 'development',
 	isProduction,
+	isTest: process.env.NODE_ENV === 'test',
 	serverPort: getEnvNumber('SERVER_PORT') || 8080,
 	workerCount,
 	sessionSecret: getEnvString('SESSION_SECRET'),

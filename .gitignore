@@ -6,3 +6,5 @@ node_modules
 src/public/static/*bundle.js*
 src/public/static/styles.css*
 *.log
+build
+!build/Dockerfile

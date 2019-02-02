@@ -7,9 +7,11 @@
 		"^.+\\.(ts|tsx)$": "./node_modules/ts-jest/preprocessor.js"
 	},
 	"testMatch": [
-		"**/__tests__/**/*.test.(ts|js)"
+		"**/__tests__/**/*.test.ts"
 	],
-	"modulePaths": ["<rootDir>/src"],
+	"modulePaths": [
+		"<rootDir>/src"
+	],
 	"testEnvironment": "node",
 	"coverageDirectory": "./build/jest/coverage",
 	"cacheDirectory": "./build/jest/cache"

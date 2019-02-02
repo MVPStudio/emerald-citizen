@@ -1,21 +1,21 @@
 {
-    "moduleFileExtensions": [
-        "ts",
-        "js"
-    ],
-    "transform": {
-        "^.+\\.(ts|tsx)$": "./node_modules/ts-jest/preprocessor.js"
-    },
-    "testMatch": [
-        "**/__e2e_tests__/**/*.test.(ts|js)"
-    ],
-    "modulePaths": [
-        "<rootDir>/src"
-    ],
-    "globalSetup": "./src/server/__e2e_tests__/global/setup.js",
-    "globalTeardown": "./src/server/__e2e_tests__/global/teardown.js",
-    "testEnvironment": "node",
-    "coverageDirectory": "./build/server/jest/coverage",
-    "cacheDirectory": "./build/server/jest/cache",
-    "verbose": true
+	"moduleFileExtensions": [
+		"ts",
+		"js"
+	],
+	"transform": {
+		"^.+\\.(ts|tsx)$": "./node_modules/ts-jest/preprocessor.js"
+	},
+	"testMatch": [
+		"**/__e2e_tests__/**/*.test.ts"
+	],
+	"modulePaths": [
+		"<rootDir>/src"
+	],
+	"globalSetup": "./src/server/__e2e_tests__/global/setup.js",
+	"globalTeardown": "./src/server/__e2e_tests__/global/teardown.js",
+	"testEnvironment": "node",
+	"coverageDirectory": "./build/server/jest/coverage",
+	"cacheDirectory": "./build/server/jest/cache",
+	"verbose": true
 }

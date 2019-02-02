@@ -3,7 +3,7 @@ import { Omit } from '../lib/typeUtils';
 import { ServiceError, ServiceErrorCode } from '../lib/ServiceError';
 import { pbkdf2, randomBytes } from 'crypto';
 import { promisify } from 'util';
-import { LoginRequest, User } from 'shared/ApiClient';
+import { LoginRequest, UserRole } from 'shared/ApiClient';
 import { handleDatabaseError } from '../lib/databaseUtils';
 
 const pbkdf2Promisified = promisify(pbkdf2);
@@ -92,6 +92,13 @@ export class UserService {
 		}
 
 		return this.sanitizeUser(user);
+	}
+
+	public async userRoleOneOf(userId: number, roles: UserRole[]): Promise<boolean> {
+		const user = await this.findById(userId);
+		const role = user == null ? null : user.role;
+
+		return role != null && roles.includes(role);
 	}
 
 	private async createPasswordForDatabase(password: string) {

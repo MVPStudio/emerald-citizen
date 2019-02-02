@@ -1,14 +1,16 @@
-import { testsClient } from './testsClient';
+import { createTestClient, loginAsAdmin, loginAsAnalyst } from './testsClient';
 import { CreateReportRequest, PersonSex } from 'shared/ApiClient';
 import { PersonCategory } from '../report/ReportDao';
 
 describe('analysts', () => {
 
 	it('should be able to view all reports', async () => {
-		await testsClient.auth.login({ username: 'admin', password: 'admin' });
+		const client = createTestClient();
+
+		await loginAsAdmin(client);
 		const reportReq: CreateReportRequest = {
 			user_id: 1,
-			date: testsClient.now(),
+			date: client.now(),
 			location: 'location',
 			room_number: 'room_number',
 			details: 'some serious details...',
@@ -33,13 +35,15 @@ describe('analysts', () => {
 				details: 'details'
 			}]
 		};
-		await testsClient.reports.create(reportReq);
-		await testsClient.reports.create(reportReq);
+		await client.reports.create(reportReq);
+		await client.reports.create(reportReq);
+		await client.auth.logout();
 
-		await testsClient.auth.login({ username: 'analyst', password: 'analyst' });
+		await loginAsAnalyst(client);
 
-		const { data: reports } = await testsClient.reports.findSortedPage();
-		await Promise.all(reports.map(report => testsClient.reports.findById(report.id)));
+		const { data: reports } = await client.reports.findSortedPage();
+
+		await Promise.all(reports.map(report => client.reports.findById(report.id)));
 	});
 
 });

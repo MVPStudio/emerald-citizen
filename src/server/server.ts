@@ -29,6 +29,10 @@ export const runServer = async () => {
 	 */
 	const publicDirectory = join(__dirname, '..', 'public');
 	const KnexSessionStore = require('connect-session-knex')(session);
+	const csrfMiddleware = config.isTest ?
+		(_: express.Request, _2: express.Response, next: express.NextFunction) => next() // skip csrf while testing
+		: csurf({ cookie: true })
+
 	const server = express()
 		.set('view engine', 'pug')
 		.enable('view cache')
@@ -37,7 +41,7 @@ export const runServer = async () => {
 		.use(lusca.xframe('SAMEORIGIN'))
 		.use(lusca.xssProtection(true))
 		.use(cookieParser())
-		.use(csurf({ cookie: true }))
+		.use(csrfMiddleware)
 		.use(session({
 			secret: config.sessionSecret,
 			cookie: {

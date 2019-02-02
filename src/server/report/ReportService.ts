@@ -80,7 +80,17 @@ export class ReportService {
 		return this.reportDao.create(report).catch(handleDatabaseError);
 	}
 
-	public async addAddendum(req: CreateReportAddendumRequest): Promise<ReportAddendum> {
+	public async addAddendum(userId: number, req: CreateReportAddendumRequest): Promise<ReportAddendum> {
+		const report = await this.reportDao.findById(req.report_id);
+
+		if (report == null) {
+			throw new ServiceError('Report not found', ServiceErrorCode.NOT_FOUND);
+		}
+
+		if (report.user_id !== userId) {
+			throw new ServiceError('Unauthorized', ServiceErrorCode.AUTHORIZTION_ERROR);
+		}
+
 		return this.reportDao.addAddendum(req).catch(handleDatabaseError);
 	}
 
