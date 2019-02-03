@@ -38,3 +38,24 @@ spec:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 1 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: emerald-citizen-web
+  namespace: emerald-citizen
+  annotations:
+    getambassador.io/config: |
+      ---
+      apiVersion: ambassador/v0
+      kind:  Mapping
+      name:  emerald-citizen-mapping
+      host: app.emeraldcitizen.org
+      service: emerald-citizen-web.emerald-citizen
+spec:
+  selector:
+     app: emerald-citizen
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
