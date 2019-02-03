@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: emerald-citizen-deployment
+  namespace: emerald-citizen
   labels:
     app: emerald-citizen
 spec:
@@ -18,6 +19,13 @@ spec:
       containers:
       - name: web-server
         image: mvpstudio/emerald-citizen:01cfcaa
+        resources:
+           limits:
+              cpu: 0.25
+              memory: 250Mi
+           requests:
+              cpu: 0.25
+              memory: 250Mi
         ports:
         - containerPort: 8080
         env: 
