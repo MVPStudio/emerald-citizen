@@ -58,7 +58,8 @@ metadata:
       apiVersion: ambassador/v0
       kind:  Mapping
       name:  emerald-citizen-mapping
-      host: app.emeraldcitizen.org
+      host: ec.app.mvpstudio.org
+      prefix: /
       service: emerald-citizen-web.emerald-citizen
 spec:
   selector:
