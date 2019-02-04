@@ -1,5 +1,4 @@
 import { observable, action, computed, IComputedValue, IObservableValue } from 'mobx';
-import * as debounce from 'lodash.debounce';
 import { uiApiClient } from 'ui/common/uiApiClient';
 import { CreateReportRequest, CreatePersonRequest, PersonCategory, CreateVehicleRequest } from 'shared/ApiClient';
 import { RouterStore } from 'ui/routing/RouterStore';
@@ -8,6 +7,7 @@ import { NewPersonFormProps } from './new-person/NewPersonForm';
 import { GeoLocationProps } from './geolocation/GeoLocation';
 import { StorageFactory } from '../common/storageFactory';
 import { NewVehicleFormProps } from './new-vehicle/NewVehicleForm';
+const debounce = require('lodash.debounce');
 
 export class NewReportFormStore {
 
