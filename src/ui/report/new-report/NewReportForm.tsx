@@ -5,7 +5,7 @@ import Button from 'react-toolbox/lib/button';
 import { CreateReportRequest, Person, CreateVehicleRequest, CreatePersonRequest } from 'shared/ApiClient';
 import { ChipField } from '../common/ChipField';
 import * as moment from 'moment';
-import { GeoLocation } from './geolocation/GeoLocation';
+import { GeoLocationContainer } from './geolocation/GeoLocationContainer';
 import Card from 'react-toolbox/lib/card';
 
 const classes = require('./NewReportForm.css');
@@ -76,7 +76,7 @@ export class NewReportForm extends React.Component<NewReportFormProps> {
 						value={date.format('HH:mm')}
 					/>
 					<div style={{clear: 'both'}}/>
-					<GeoLocation/>
+					<GeoLocationContainer/>
 					<Input
 						label='Room Number'
 						value={report.room_number || ''}

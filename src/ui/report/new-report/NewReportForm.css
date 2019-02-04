@@ -13,19 +13,6 @@
 		}
 	}
 
-	h5 {
-		text-align: center;
-		text-transform: uppercase;
-		letter-spacing: 1px;
-		color: #999;
-		max-width: 400px;
-		margin: 45px auto;
-
-		a {
-			color: #9C1A1C;
-		}
-	}
-
 	textarea {
 		min-height: 100px;
 		padding-right: 5px;

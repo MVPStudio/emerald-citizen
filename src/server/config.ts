@@ -21,6 +21,7 @@ export const config = {
 	sessionSecret: getEnvString('SESSION_SECRET'),
 	assumeRole: getEnvBoolean('ASSUME_ROLE'),
 	s3Bucket: getEnvString('S3_BUCKET'),
+	googleMapsApiKey: getEnvString('GOOGLE_MAPS_WEB_API_KEY'),
 	database: {
 		client: 'pg',
 		acquireConnectionTimeout: getEnvNumber('DATABASE_ACQUIRE_CONNECTION_TIMEOUT'),
