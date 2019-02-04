@@ -56,7 +56,15 @@ export const runServer = async () => {
 		.use(getApiRouter())
 		.get('/favicon.ico', (_, res) => res.end())
 		.use(express.static(publicDirectory))
-		.get('*', (req, res) => res.render(join(publicDirectory, 'index.pug'), { csrfToken: req.csrfToken() }));
+		.get('*', (req, res) =>
+			res.render(
+				join(publicDirectory, 'index.pug'),
+				{
+					csrfToken: req.csrfToken(),
+					mapsApiKey: config.googleMapsApiKey
+				}
+			)
+		);
 
 	// this is required to make nodemon && concurrent actually stop the server process
 	process.on('SIGINT', shutdownServer);

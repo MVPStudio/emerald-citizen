@@ -1,14 +1,13 @@
 import { observable, action, computed, IComputedValue, IObservableValue } from 'mobx';
+import * as debounce from 'lodash.debounce';
 import { uiApiClient } from 'ui/common/uiApiClient';
 import { CreateReportRequest, CreatePersonRequest, PersonCategory, CreateVehicleRequest } from 'shared/ApiClient';
 import { RouterStore } from 'ui/routing/RouterStore';
 import { NewReportFormProps } from './NewReportForm';
 import { NewPersonFormProps } from './new-person/NewPersonForm';
-import { GeoLocationComponentProps } from './geolocation/GeoLocationComponent';
+import { GeoLocationProps } from './geolocation/GeoLocation';
 import { StorageFactory } from '../common/storageFactory';
 import { NewVehicleFormProps } from './new-vehicle/NewVehicleForm';
-
-const { geocodeByAddress } = require('react-places-autocomplete');
 
 export class NewReportFormStore {
 
@@ -44,16 +43,15 @@ export class NewReportFormStore {
 		removeFile: this.removeFile
 	}));
 
-	@computed
-	public get geoLocationProps(): GeoLocationComponentProps {
-		return {
-			geoAvailable: this.geoAvailable,
-			geoError: this.geoError,
-			location: this.report.get().location,
-			setCurrentLocation: this.setCurrentLocation,
-			setLocation: this.setLocation
-		}
-	}
+	public geoLocationProps: IComputedValue<GeoLocationProps> = computed(() => ({
+		geoAvailable: this.geoAvailable,
+		geoError: this.geoError.get(),
+		location: this.report.get().location,
+		locationSuggestions: this.locationSuggestions.get(),
+		setCurrentLocation: this.setCurrentLocation,
+		setLocation: this.setLocation,
+		clearLocationSuggestions: this.clearLocationSuggestions
+	}));
 
 	public newPersonFormProps: IComputedValue<NewPersonFormProps> = computed(() => ({
 		person: this.editedPerson.get(),
@@ -81,15 +79,14 @@ export class NewReportFormStore {
 	 */
 	private report = observable.box<Partial<CreateReportRequest>>(this.newReportStorage.get());
 
-	@action.bound
-	private updateReport(update: Partial<CreateReportRequest>) {
+	private updateReport = (update: Partial<CreateReportRequest>) => {
 		const updatedReport = { ...this.report.get(), ...update };
 		this.report.set(updatedReport);
 		this.newReportStorage.set(updatedReport);
 	}
 
 	@action.bound
-	private resetReport() {
+	private resetReport = () => {
 		this.report.set({});
 		this.newReportStorage.clear();
 		this.fileUrls = [];
@@ -376,14 +373,28 @@ export class NewReportFormStore {
 	 * Geo State
 	 */
 	@observable.ref
-	private geoError: string | null = null;
+	private geoError: IObservableValue<string | null> = observable.box(null);
+	private locationSuggestions: IObservableValue<string[]> = observable.box([]);
 
 	private readonly geoAvailable = this.geolocation != null;
+	private readonly googleGeocoder = new google.maps.Geocoder();
+	private readonly googleAutocompleteService = new google.maps.places.AutocompleteService();
 
 	private readonly setCurrentLocation = () => {
 		this.geolocation.getCurrentPosition(
-			({ coords: { latitude, longitude } }) => {
-				this.setReportLocation(null, latitude, longitude);
+			({ coords }) => {
+				const { latitude, longitude } = coords;
+				let location = `(${latitude}, ${longitude})`;
+
+				this.googleGeocoder.geocode(
+					{ location: { lat: latitude, lng: longitude } },
+					(results: any[], status: string) => {
+						if (status === 'OK' && results[0]) {
+							location = results[0].formatted_address;
+						}
+
+						this.setReportLocation(null, { lat: latitude, lng: longitude }, location);
+					});
 			},
 			({ code }) => {
 				this.setReportLocation(this.GEOLOCATION_ERROR[code]);
@@ -396,21 +407,57 @@ export class NewReportFormStore {
 		)
 	}
 
-	private readonly setLocation = (location: string) => {
-		geocodeByAddress(location, (err: string | null, { lat, lng }: { lat: number, lng: number }) => {
-			this.setReportLocation(err, lat, lng, location);
-		});
-	}
-
-	@action
-	private setReportLocation(err: string | null, lat?: number, lng?: number, location?: string) {
-		this.geoError = err;
-
-		if (this.geoError) {
-			return;
+	private readonly setLocation = (location: string, wasSuggested?: boolean) => {
+		this.setReportLocation(null, undefined, location); // update input value immediately
+		this.reverseGeocodeLocation(location); // debounce and lazily update lat/lng
+		if (wasSuggested) {
+			this.clearLocationSuggestions();
+		} else {
+			this.loadLocationSuggestions(location); // debounce and lazily load suggestions
 		}
+	};
 
-		this.report.set({ ...this.report, geo_latitude: lat, geo_longitude: lng, location });
+	private clearLocationSuggestions = () => {
+		this.locationSuggestions.set([]);
+	};
+
+	private loadLocationSuggestions = debounce(
+		(location: string) => {
+			this.googleAutocompleteService.getQueryPredictions({ input: location }, (results: any[] = [], status: string) => {
+				if (status === 'OK') {
+					this.locationSuggestions.set(results.map(r => r.description));
+				}
+			});
+		},
+		1000,
+		{ leading: false, trailing: true }
+	);
+
+	private reverseGeocodeLocation = debounce(
+		(location: string) => {
+			this.googleGeocoder.geocode({ 'address': location }, (results: any[] = [], status: string) => {
+				if (status === 'OK' && results[0]) {
+					const { geometry } = results[0];
+					this.setReportLocation(
+						null,
+						{
+							lat: geometry.location.lat(),
+							lng: geometry.location.lng()
+						},
+						this.report.get().location
+					);
+				}
+			});
+		},
+		2000,
+		{ leading: false, trailing: true }
+	);
+
+	private setReportLocation(err: string | null, coords?: Coordinates, location?: string) {
+		const { lat, lng }: Coordinates = coords || {};
+
+		this.geoError.set(err);
+		this.updateReport({ geo_latitude: lat, geo_longitude: lng, location });
 	}
 
 	private readonly GEOLOCATION_ERROR: ReadonlyArray<string> = [
@@ -420,3 +467,5 @@ export class NewReportFormStore {
 		'Position timed out, please try again'
 	];
 }
+
+type Coordinates = { lat?: number, lng?: number };
