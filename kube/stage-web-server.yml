@@ -2,8 +2,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: emerald-citizen-deployment
-  namespace: emerald-citizen
+  name: stage-emerald-citizen-deployment
+  namespace: stage-emerald-citizen
   labels:
     app: emerald-citizen
 spec:
@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: web-server
-        image: mvpstudio/emerald-citizen:01cfcaa
+        image: mvpstudio/emerald-citizen:latest
         resources:
            limits:
               cpu: 0.25
@@ -41,6 +41,11 @@ spec:
               key: username
         - name: DATABASE_HOST
           value: emerald-citizen-postgres
+        - name: GOOGLE_MAPS_WEB_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: google-maps-api-key
+              key: apikey
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -51,16 +56,16 @@ apiVersion: v1
 kind: Service
 metadata:
   name: emerald-citizen-web
-  namespace: emerald-citizen
+  namespace: stage-emerald-citizen
   annotations:
     getambassador.io/config: |
       ---
       apiVersion: ambassador/v0
-      kind:  Mapping
-      name:  emerald-citizen-mapping
-      host: ec.app.mvpstudio.org
+      kind: Mapping
+      name: stage-emerald-citizen-mapping
+      host: test.emeraldcitizen.org
       prefix: /
-      service: emerald-citizen-web.emerald-citizen
+      service: emerald-citizen-web.stage-emerald-citizen
 spec:
   selector:
      app: emerald-citizen
