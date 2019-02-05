@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: web-server
-        image: mvpstudio/emerald-citizen:01cfcaa
+        image: mvpstudio/emerald-citizen:c534f66
         resources:
            limits:
               cpu: 0.25
@@ -66,6 +66,13 @@ metadata:
       host: emeraldcitizen.org
       prefix: /
       service: emerald-citizen-web.prod-emerald-citizen
+      ---
+      apiVersion: ambassador/v0
+      kind: TLSContext
+      name: prod-emerald-citizen-tls
+      hosts:
+      - emeraldcitizen.org
+      secret: emerald-citizen-certification
 spec:
   selector:
      app: emerald-citizen

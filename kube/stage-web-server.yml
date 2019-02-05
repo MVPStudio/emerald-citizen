@@ -66,6 +66,13 @@ metadata:
       host: test.emeraldcitizen.org
       prefix: /
       service: emerald-citizen-web.stage-emerald-citizen
+      ---
+      apiVersion: ambassador/v0
+      kind: TLSContext
+      name: stage-emerald-citizen-tls
+      hosts:
+      - test.emeraldcitizen.org
+      secret: emerald-citizen-certification
 spec:
   selector:
      app: emerald-citizen
