@@ -2,13 +2,13 @@
 kind: Namespace
 apiVersion: v1
 metadata:
-   name: emerald-citizen
+   name: stage-emerald-citizen
 ---
 kind: ResourceQuota
 apiVersion: v1
 metadata:
-   name: emerald-citizen-quota
-   namespace: emerald-citizen
+   name: stage-emerald-citizen-quota
+   namespace: stage-emerald-citizen
 spec:
    hard:
       limits.cpu: 2
