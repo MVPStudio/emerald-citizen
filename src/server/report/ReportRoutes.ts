@@ -1,7 +1,7 @@
 import { ReportService } from './ReportService';
 import { Router, Request, Response } from 'express';
 import { CreateReportRequest, CreateReportAddendumRequest, UserRole } from 'shared/ApiClient';
-import { getSessionUserId } from '../lib/sessionUtils';
+import { getSessionUserId, getSessionUser } from '../lib/sessionUtils';
 import { AuthMiddleware } from 'server/auth/AuthMiddleware';
 
 export const getReportRoutes = (
@@ -14,8 +14,12 @@ export const getReportRoutes = (
 			(req: Request, res: Response) => res.sendPromise(reportService.findSortedPage(parseInt(req.query.page || 0, 10)))
 		])
 		.get('/:id', [
-			authMiddleware.limitToRoles(UserRole.admin, UserRole.analyst),
-			(req: Request, res: Response) => res.sendPromise(reportService.findById(parseInt(req.params.id, 10)))
+			authMiddleware.limitToRoles(UserRole.admin, UserRole.analyst, UserRole.reporter),
+			(req: Request, res: Response) => {
+				const user = getSessionUser(req);
+
+				res.sendPromise(reportService.findById(parseInt(req.params.id, 10), user));
+		}
 		])
 		.post('', [
 			authMiddleware.limitToRoles(UserRole.admin, UserRole.reporter),
@@ -26,7 +30,7 @@ export const getReportRoutes = (
 			}
 		])
 		.post('/:id/addendum', [
-			authMiddleware.limitToRoles(UserRole.reporter),
+			authMiddleware.limitToRoles(UserRole.admin, UserRole.reporter),
 			(req: Request, res: Response) => {
 				const addendum: CreateReportAddendumRequest = {
 					report_id: parseInt(req.params.id, 10),

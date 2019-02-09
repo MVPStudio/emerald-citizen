@@ -6,7 +6,9 @@ import {
 	ReportDetails,
 	ReportFile,
 	SearchReportsRequest,
-	Report
+	Report,
+	UserRole,
+	User
 } from 'shared/ApiClient';
 import { handleDatabaseError } from '../lib/databaseUtils';
 import { MediaService } from 'server/media/MediaService';
@@ -41,11 +43,15 @@ export class ReportService {
 		}));
 	}
 
-	public async findById(id: number): Promise<ReportDetails | null> {
+	public async findById(id: number, accessingUser: User): Promise<ReportDetails | null> {
 		const reportPersistence = await this.reportDao.findById(id).catch(handleDatabaseError);
 
 		if (reportPersistence == null) {
 			return null;
+		}
+
+		if (accessingUser.role === UserRole.reporter && reportPersistence.user_id !== accessingUser.id) {
+			throw new ServiceError('Unauthorized', ServiceErrorCode.AUTHORIZATION_ERROR);
 		}
 
 		const files: ReportFile[] = [];
@@ -88,7 +94,7 @@ export class ReportService {
 		}
 
 		if (report.user_id !== userId) {
-			throw new ServiceError('Unauthorized', ServiceErrorCode.AUTHORIZTION_ERROR);
+			throw new ServiceError('Unauthorized', ServiceErrorCode.AUTHORIZATION_ERROR);
 		}
 
 		return this.reportDao.addAddendum(req).catch(handleDatabaseError);
