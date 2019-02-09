@@ -20,7 +20,8 @@ export const config = {
 	workerCount,
 	sessionSecret: getEnvString('SESSION_SECRET'),
 	assumeRole: getEnvBoolean('ASSUME_ROLE'),
-	s3Bucket: getEnvString('S3_BUCKET'),
+	storageBucket: getEnvString('STORAGE_BUCKET'),
+	projectId: getEnvString('PROJECT_ID'),
 	googleMapsApiKey: getEnvString('GOOGLE_MAPS_WEB_API_KEY'),
 	database: {
 		client: 'pg',

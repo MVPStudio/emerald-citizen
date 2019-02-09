@@ -130,10 +130,10 @@ export class NewReportFormStore {
 		this.fileUploading.set(true);
 
 		try {
-			const { uploadData, getUrl } = (await this.apiClient.media.getSignedUpload()).data;
-			await this.apiClient.media.uploadFileToS3(uploadData.url, uploadData.fields, file);
+			const { filename, putUrl, getUrl } = (await this.apiClient.media.getSignedUpload()).data;
+			await this.apiClient.media.uploadFile(putUrl, file);
 
-			this.updateFiles(uploadData.fields.key, getUrl);
+			this.updateFiles(filename, getUrl);
 		} catch (e) {
 			console.error(e); // tslint:disable-line:no-console
 			this.fileUploading.set(false);
