@@ -46,6 +46,18 @@ spec:
             secretKeyRef:
               name: google-maps-api-key
               key: apikey
+        - name: S3_BUCKET
+          value: stage-emerald-citizen
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: aws-access-key-id
+              key: key
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aws-secret-access-key
+              key: key
   strategy:
     type: RollingUpdate
     rollingUpdate:
