@@ -62,6 +62,8 @@ spec:
               key: secret
         - name: GOOGLE_APPLICATION_CREDENTIALS
           value: /var/secrets/google/key.json
+        - name: STORAGE_BUCKET
+          value: prod-emerald-citizen
   strategy:
     type: RollingUpdate
     rollingUpdate:
