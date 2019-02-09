@@ -6,6 +6,12 @@
 		margin-top: 5px;
 	}
 
+	li {
+		span {
+			white-space: pre-wrap;
+		}
+	}
+
 	hr {
 		background-color: #444;
     margin: 5px 0 !important;
