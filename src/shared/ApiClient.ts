@@ -1,5 +1,4 @@
 import { AxiosInstance } from 'axios';
-import { PresignedPost } from 'aws-sdk/clients/s3';
 
 export class ApiClient {
 	constructor(
@@ -45,14 +44,12 @@ export class ApiClient {
 	}
 
 	public readonly media = {
-		getSignedUpload: () => this.client.get<MediaSignedUpload>(`${this.mediaUrl}/signed_upload`),
-		uploadFileToS3: (url: string, fields: Record<string, string>, file: File) => {
-			const data = new FormData();
+		uploadFile: async (file: File) => {
+			const fileData = new FormData();
+			fileData.append('file', file);
 
-			Object.entries(fields).forEach(([key, value]) => data.append(key, value));
-			data.append('file', file);
-
-			this.client.post<void>(url, data);
+			const { data } = await this.client.post<MediaSignedUpload>(`${this.mediaUrl}/upload/${file.name}`, fileData);
+			return data;
 		}
 	}
 
@@ -188,7 +185,7 @@ export interface ReportAddendum extends CreateReportAddendumRequest, Timestamped
 }
 
 export interface MediaSignedUpload {
-	uploadData: PresignedPost
+	filename: string;
 	getUrl: string;
 }
 

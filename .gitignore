@@ -8,3 +8,4 @@ src/public/static/styles.css*
 *.log
 build
 !build/Dockerfile
+stage-emerald-citizen.json

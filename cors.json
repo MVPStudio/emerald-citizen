@@ -1,0 +1,27 @@
+[
+	{
+		"origin": [
+			"*"
+		],
+		"method": [
+			"GET",
+			"HEAD",
+			"POST",
+			"PUT",
+			"OPTIONS"
+		],
+		"responseHeader": [
+			"Origin",
+			"Accept",
+			"X-Requested-With",
+			"Authorization",
+			"Content-Type",
+			"Content-Length",
+			"Accept-Encoding",
+			"csrf-token",
+			"Referrer",
+			"User-Agent"
+		],
+		"maxAgeSeconds": "10"
+	}
+]

@@ -1,7 +1,9 @@
 import { v1 } from 'uuid';
-import { s3Client } from '../lib/awsClients';
 import { config } from 'server/config';
+import { storageClient } from 'server/lib/gcloudClients';
 import { MediaSignedUpload } from 'shared/ApiClient';
+import { Storage } from '@google-cloud/storage';
+import * as stream from 'stream';
 
 export class MediaService {
 	public static getInstance() {
@@ -11,46 +13,43 @@ export class MediaService {
 	private static _instance: MediaService
 
 	constructor(
-		private bucket = config.s3Bucket,
-		private s3 = s3Client
+		private bucketName: string = config.storageBucket,
+		private client: Storage = storageClient
 	) { }
 
-	public getSignedUpload(): Promise<MediaSignedUpload> {
-		const key = v1();
+	public async upload(filename: string, data: Buffer): Promise<MediaSignedUpload> {
+		const key = `${v1()}-${filename}`;
 
-		return new Promise<MediaSignedUpload>((resolve, reject) => {
-			this.s3.createPresignedPost(
-				{
-					Bucket: this.bucket,
-					Fields: {
-						key
-					},
-					Conditions: [
-						['content-length-range', 0, 10000000] // 10 Mb
-					]
-				},
-				(err, uploadData) => {
-					if (err) {
-						return reject(err)
-					}
+		const bufferStream = new stream.PassThrough();
+		bufferStream.end(data);
+		const writeStream = this.client.bucket(this.bucketName).file(key).createWriteStream();
 
-					this.getSignedUrl(key)
-						.then(getUrl => resolve({ uploadData, getUrl }))
-						.catch(reject);
-				}
-			)
-		});
+		await (new Promise((resolve, reject) => {
+			bufferStream.pipe(writeStream)
+				.on('finish', resolve)
+				.on('error', reject);
+		}));
+
+		const [getUrl] = await this.client
+			.bucket(this.bucketName)
+			.file(key)
+			.getSignedUrl({
+				action: 'read',
+				expires: Date.now() + 1000 * 60 * 60, // 1 hour
+			});
+
+		return { getUrl, filename: key };
 	}
 
-	public getSignedUrl(filename: string): Promise<string> {
-		return new Promise((resolve, reject) =>
-			this.s3.getSignedUrl('getObject', { Bucket: this.bucket, Key: filename }, (err, url) => {
-				if (err) {
-					return reject(err)
-				}
+	public async getSignedUrl(key: string): Promise<string> {
+		const [getUrl] = await this.client
+			.bucket(this.bucketName)
+			.file(key)
+			.getSignedUrl({
+				action: 'read',
+				expires: Date.now() + 1000 * 60 * 10, // 10 minutes
+			});
 
-				resolve(url);
-			})
-		);
+		return getUrl;
 	}
 }

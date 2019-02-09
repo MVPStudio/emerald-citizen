@@ -130,10 +130,8 @@ export class NewReportFormStore {
 		this.fileUploading.set(true);
 
 		try {
-			const { uploadData, getUrl } = (await this.apiClient.media.getSignedUpload()).data;
-			await this.apiClient.media.uploadFileToS3(uploadData.url, uploadData.fields, file);
-
-			this.updateFiles(uploadData.fields.key, getUrl);
+			const { getUrl, filename } = await this.apiClient.media.uploadFile(file);
+			this.updateFiles(filename, getUrl);
 		} catch (e) {
 			console.error(e); // tslint:disable-line:no-console
 			this.fileUploading.set(false);
@@ -145,16 +143,10 @@ export class NewReportFormStore {
 			files: (this.report.get().files || []).concat({ filename })
 		});
 
-		// wait a second to make sure upload finished
-		setTimeout(
-			() => {
-				const updatedFileUrls = this.fileUrls.concat(fileUrl);
-				this.fileUrls = updatedFileUrls;
-				this.fileUrlsStorage.set(updatedFileUrls);
-				this.fileUploading.set(false);
-			},
-			1000
-		);
+		const updatedFileUrls = this.fileUrls.concat(fileUrl);
+		this.fileUrls = updatedFileUrls;
+		this.fileUrlsStorage.set(updatedFileUrls);
+		this.fileUploading.set(false);
 	});
 
 	private removeFile = action((fileIndex: number) => {

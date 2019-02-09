@@ -16,6 +16,10 @@ spec:
       labels:
         app: emerald-citizen
     spec:
+      volumes:
+      - name: google-cloud-key
+        secret:
+          secretName: google-cloud-key
       containers:
       - name: web-server
         image: mvpstudio/emerald-citizen:c534f66
@@ -28,7 +32,12 @@ spec:
               memory: 250Mi
         ports:
         - containerPort: 8080
+        volumeMounts:
+        - name: google-cloud-key
+          mountPath: /var/secrets/google
         env: 
+        - name: NODE_ENV
+          value: production
         - name: DATABASE_PASSWORD
           valueFrom:
             secretKeyRef:
@@ -46,18 +55,15 @@ spec:
             secretKeyRef:
               name: google-maps-api-key
               key: apikey
-        - name: S3_BUCKET
-          value: stage-emerald-citizen
-        - name: AWS_ACCESS_KEY_ID
+        - name: SESSION_SECRET
           valueFrom:
             secretKeyRef:
-              name: aws-access-key-id
-              key: key
-        - name: AWS_SECRET_ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              name: aws-secret-access-key
-              key: key
+              name: session-secret
+              key: secret
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/secrets/google/key.json
+        - name: STORAGE_BUCKET
+          value: prod-emerald-citizen
   strategy:
     type: RollingUpdate
     rollingUpdate:

@@ -17,8 +17,8 @@ export const getApiRouter = () => {
 			.use(bodyParser.json())
 			.use(bodyParser.urlencoded({ extended: true }))
 			.use(sendPromise())
-			.get('/health', healthCheck)
 			.use(requestLogger)
+			.get('/health', healthCheck)
 			.use('/auth', getAuthRoutes())
 			.use('/me', getMeRoutes())
 			.use('/users', getUserRoutes())
@@ -33,7 +33,7 @@ function requestLogger(req: Request, res: Response, next: NextFunction) {
 	const { method, originalUrl, params, query, body, headers } = req;
 	const { password, ...bodyWithoutPassword } = body;
 	const { cookie, ...headersWithoutCookie } = headers;
-
+	
 	logger.debug(JSON.stringify({ method, originalUrl, params, query, body: bodyWithoutPassword, headersWithoutCookie }));
 	next();
 }
