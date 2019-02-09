@@ -1,5 +1,4 @@
 import { AxiosInstance } from 'axios';
-import { PresignedPost } from 'aws-sdk/clients/s3';
 
 export class ApiClient {
 	constructor(

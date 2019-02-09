@@ -8,4 +8,4 @@ src/public/static/styles.css*
 *.log
 build
 !build/Dockerfile
-mvpstudio.json
+stage-emerald-citizen.json
