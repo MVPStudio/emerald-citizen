@@ -46,13 +46,11 @@ export class ApiClient {
 
 	public readonly media = {
 		getSignedUpload: () => this.client.get<MediaSignedUpload>(`${this.mediaUrl}/signed_upload`),
-		uploadFileToS3: (url: string, fields: Record<string, string>, file: File) => {
+		uploadFile: (url: string, file: File) => {
 			const data = new FormData();
 
-			Object.entries(fields).forEach(([key, value]) => data.append(key, value));
 			data.append('file', file);
-
-			this.client.post<void>(url, data);
+			return this.client.put<void>(url, data);
 		}
 	}
 
@@ -188,7 +186,8 @@ export interface ReportAddendum extends CreateReportAddendumRequest, Timestamped
 }
 
 export interface MediaSignedUpload {
-	uploadData: PresignedPost
+	filename: string;
+	putUrl: string;
 	getUrl: string;
 }
 

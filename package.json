@@ -20,6 +20,7 @@
 		"drop-database": "ts-node -r tsconfig-paths/register ./src/server/database/setup/dropDatabase"
 	},
 	"dependencies": {
+		"@google-cloud/storage": "^2.4.2",
 		"aws-sdk": "^2.348.0",
 		"axios": "^0.18.0",
 		"bluebird": "^3.4.6",
