@@ -54,7 +54,7 @@ export class UsersTable extends React.Component<UsersTableProps> {
 									<TableCell>{id}</TableCell>
 									<TableCell>{username}</TableCell>
 									<TableCell>
-										<select onChange={this.updateUserRoleHandler(id)}>
+										<select onChange={this.updateUserRoleHandler(id)} value={role}>
 											{userRoleOptions.map(({ value }) => <option key={value}>{value}</option>)}
 										</select>
 									</TableCell>
