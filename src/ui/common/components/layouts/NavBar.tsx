@@ -100,8 +100,7 @@ export class NavBarComponent extends React.Component<NavBarComponentProps, NavBa
 				{
 					user &&
 					<Navigation type='horizontal'>
-						<Button raised={true} accent={true} onClick={this.call911} label='911' />
-						<Button disabled={true}>{user.username}</Button>
+						<Button className={classes.nineoneone} raised={true} accent={true} onClick={this.call911} label='911' />
 						<Button raised={true} onClick={this.handleLogout} label='Logout' />
 					</Navigation>
 				}
