@@ -22,7 +22,7 @@ spec:
           secretName: google-cloud-key
       containers:
       - name: web-server
-        image: mvpstudio/emerald-citizen:c534f66
+        image: mvpstudio/emerald-citizen:a85f38d
         resources:
            limits:
               cpu: 0.25
