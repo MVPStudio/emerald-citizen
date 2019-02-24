@@ -18,6 +18,7 @@ metadata:
   name: prod-emerald-citizen-postgres-deploy
   namespace: prod-emerald-citizen
 spec:
+  serviceName: postgres
   selector:
     matchLabels:
       app: emerald-citizen-postgres

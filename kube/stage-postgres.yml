@@ -18,6 +18,7 @@ metadata:
   name: stage-emerald-citizen-postgres-deploy
   namespace: stage-emerald-citizen
 spec:
+  serviceName: postgres
   selector:
     matchLabels:
       app: emerald-citizen-postgres
