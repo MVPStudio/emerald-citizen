@@ -15,7 +15,9 @@ jobs:
           root: ./
           # Must be relative path from root
           paths:
-            - .
+            - build
+            - mvpstudio.yml
+            - .git
 
   deploy:
     docker:
