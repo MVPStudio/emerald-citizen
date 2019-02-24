@@ -16,7 +16,7 @@ jobs:
     docker:
       - image: circleci/python:3
     steps:
-      - run: git clone -b test git@github.com:MVPStudio/build_setup.git
+      - run: git clone -b test https://github.com/MVPStudio/build_setup.git
       - run: cd ~/project
       - run: python ~/build_setup/build_tag_push.py mvpstudio ./mvpstudio.yml
 
