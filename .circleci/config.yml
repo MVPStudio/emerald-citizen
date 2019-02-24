@@ -19,10 +19,12 @@ jobs:
 
   deploy:
     docker:
-      - image: docker:stable
+      - image: circleci/python:3
     steps:
       - attach_workspace:
           at: ./build-output
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run: git clone -b test https://github.com/MVPStudio/build_setup.git
       - run: cd ./build-output
       - run: python ../build_setup/build_tag_push.py mvpstudio ./mvpstudio.yml
