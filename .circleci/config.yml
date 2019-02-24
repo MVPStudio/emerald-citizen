@@ -7,7 +7,6 @@ jobs:
       - image: circleci/postgres:9-alpine-ram
     steps:
       - checkout
-      - run: npm install -g yarn
       - run: yarn build
 
   deploy:
