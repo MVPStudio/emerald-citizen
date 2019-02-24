@@ -30,7 +30,7 @@ jobs:
             git clone -b test https://github.com/MVPStudio/build_setup.git
             cd ./build-output
             echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
-            pip install pyyaml
+            sudo pip install pyyaml
             python ../build_setup/build_tag_push.py mvpstudio ./mvpstudio.yml
 
 workflows:
