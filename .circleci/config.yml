@@ -26,11 +26,11 @@ jobs:
       - setup_remote_docker:
           docker_layer_caching: true
       - run:
-        command: |
-          git clone -b test https://github.com/MVPStudio/build_setup.git
-          cd ./build-output
-          echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
-          python ../build_setup/build_tag_push.py mvpstudio ./mvpstudio.yml
+          command: |
+            git clone -b test https://github.com/MVPStudio/build_setup.git
+            cd ./build-output
+            echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
+            python ../build_setup/build_tag_push.py mvpstudio ./mvpstudio.yml
 
 workflows:
   version: 2
