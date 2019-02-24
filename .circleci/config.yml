@@ -38,7 +38,7 @@ jobs:
 
   deploy:
     docker:
-      - image: google/cloud-sdk:stable
+      - image: google/cloud-sdk:slim
     steps:
       - attach_workspace:
           at: ./build-output
