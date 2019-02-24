@@ -1,0 +1,49 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:10
+      - image: circleci/postgres:9-alpine-ram
+        environment:
+          POSTGRES_USER: emcit
+    steps:
+      - checkout
+      - run: yarn build
+      - persist_to_workspace:
+          root: ./
+          # must include anything needed by the Dockerfile, mvpstudio.yml, and .git
+          paths:
+            - build
+            - mvpstudio.yml
+            - .git
+
+  publish:
+    docker:
+      - image: circleci/python:3
+    steps:
+      - attach_workspace:
+          at: ./build-output
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          command: |
+            git clone -b test https://github.com/MVPStudio/build_setup.git
+            echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
+            sudo pip install pyyaml
+            ls -l
+            cd ./build-output
+            ls -l
+            python ../build_setup/build_tag_push.py mvpstudio ./mvpstudio.yml
+
+workflows:
+  version: 2
+  my-workflow:
+    jobs:
+      - build
+      - publish:
+          context: deploy
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
