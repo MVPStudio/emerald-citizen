@@ -28,9 +28,11 @@ jobs:
       - run:
           command: |
             git clone -b test https://github.com/MVPStudio/build_setup.git
-            cd ./build-output
             echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
             sudo pip install pyyaml
+            ls -l
+            cd ./build-output
+            ls -l
             python ../build_setup/build_tag_push.py mvpstudio ./mvpstudio.yml
 
 workflows:
