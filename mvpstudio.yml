@@ -1,0 +1,5 @@
+name: emerald-citizen
+build: build.sh
+test: test.sh
+docker_context:
+  - .

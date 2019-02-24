@@ -1,11 +1,10 @@
 .DS_Store
 .idea
 *.iml
-build/dist
 node_modules
 src/public/static/*bundle.js*
 src/public/static/styles.css*
 *.log
-build
-!build/Dockerfile
 stage-emerald-citizen.json
+build
+dist

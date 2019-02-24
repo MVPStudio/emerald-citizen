@@ -17,58 +17,58 @@ spec:
         app: emerald-citizen
     spec:
       volumes:
-      - name: google-cloud-key
-        secret:
-          secretName: google-cloud-key
-      containers:
-      - name: web-server
-        image: mvpstudio/emerald-citizen:95891bb
-        resources:
-           limits:
-              cpu: 0.25
-              memory: 250Mi
-           requests:
-              cpu: 0.25
-              memory: 250Mi
-        ports:
-        - containerPort: 8080
-        volumeMounts:
         - name: google-cloud-key
-          mountPath: /var/secrets/google
-        env: 
-        - name: NODE_ENV
-          value: production
-        - name: DATABASE_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: emerald-citizen-postgres
-              key: password
-        - name: DATABASE_USER
-          valueFrom:
-            secretKeyRef:
-              name: emerald-citizen-postgres
-              key: username
-        - name: DATABASE_HOST
-          value: emerald-citizen-postgres
-        - name: GOOGLE_MAPS_WEB_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: google-maps-api-key
-              key: apikey
-        - name: SESSION_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: session-secret
-              key: secret
-        - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: /var/secrets/google/key.json
-        - name: STORAGE_BUCKET
-          value: prod-emerald-citizen
+          secret:
+            secretName: google-cloud-key
+      containers:
+        - name: web-server
+          image: mvpstudio/emerald-citizen:95891bb
+          resources:
+            limits:
+              cpu: 0.25
+              memory: 250Mi
+            requests:
+              cpu: 0.25
+              memory: 250Mi
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: google-cloud-key
+              mountPath: /var/secrets/google
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: emerald-citizen-postgres
+                  key: password
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: emerald-citizen-postgres
+                  key: username
+            - name: DATABASE_HOST
+              value: emerald-citizen-postgres
+            - name: GOOGLE_MAPS_WEB_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: google-maps-api-key
+                  key: apikey
+            - name: SESSION_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: session-secret
+                  key: secret
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /var/secrets/google/key.json
+            - name: STORAGE_BUCKET
+              value: prod-emerald-citizen
   strategy:
     type: RollingUpdate
     rollingUpdate:
       maxSurge: 1
-      maxUnavailable: 1 
+      maxUnavailable: 1
 ---
 apiVersion: v1
 kind: Service
@@ -93,8 +93,8 @@ metadata:
       secret: emerald-citizen-certification
 spec:
   selector:
-     app: emerald-citizen
+    app: emerald-citizen
   ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 8080
+    - protocol: TCP
+      port: 80
+      targetPort: 8080

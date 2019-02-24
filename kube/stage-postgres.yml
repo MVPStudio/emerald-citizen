@@ -7,8 +7,8 @@ metadata:
     app: emerald-citizen-postgres
 spec:
   ports:
-  - port: 5432
-    name: postgres
+    - port: 5432
+      name: postgres
   selector:
     app: emerald-citizen-postgres
 ---
@@ -28,39 +28,39 @@ spec:
         app: emerald-citizen-postgres
     spec:
       containers:
-      - name: postgres
-        image: postgres
-        resources:
-           limits:
+        - name: postgres
+          image: postgres
+          resources:
+            limits:
               cpu: 0.25
               memory: 250Mi
-           requests:
+            requests:
               cpu: 0.25
               memory: 250Mi
-        env:
-        - name: PGDATA
-          value: /data
-        - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: emerald-citizen-postgres
-              key: password
-        - name: POSTGRES_USER
-          valueFrom:
-            secretKeyRef:
-              name: emerald-citizen-postgres
-              key: username
-        ports:
-        - containerPort: 5432
-          name: postgres
-        volumeMounts:
-        - name: pgdata
-          mountPath: /datamount/data
+          env:
+            - name: PGDATA
+              value: /data
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: emerald-citizen-postgres
+                  key: password
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: emerald-citizen-postgres
+                  key: username
+          ports:
+            - containerPort: 5432
+              name: postgres
+          volumeMounts:
+            - name: pgdata
+              mountPath: /datamount/data
   volumeClaimTemplates:
-  - metadata:
-      name: pgdata
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 30Gi
+    - metadata:
+        name: pgdata
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 30Gi
