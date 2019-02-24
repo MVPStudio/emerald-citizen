@@ -7,16 +7,15 @@ jobs:
         environment:
           POSTGRES_USER: emcit
     steps:
-      - checkout:
-          path: ./repo
-      - run: 
-          command: |
-            cd repo
-            yarn build
+      - checkout
+      - run: yarn build
       - persist_to_workspace:
           root: ./
+          # must include anything needed by the Dockerfile, mvpstudio.yml, and .git
           paths:
-            - repo
+            - build
+            - mvpstudio.yml
+            - .git
 
   deploy:
     docker:
