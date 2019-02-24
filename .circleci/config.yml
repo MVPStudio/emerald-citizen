@@ -1,0 +1,30 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/project
+    docker:
+      - image: circleci/node:10
+      - image: circleci/postgres:9-alpine-ram
+    steps:
+      - checkout
+      - run: npm install -g yarn
+      - run: yarn build
+
+  deploy:
+    working_directory: ~/build_setup
+    docker:
+      - image: circleci/python:3
+    steps:
+      - run: git clone -b test git@github.com:MVPStudio/build_setup.git
+      - run: cd ~/project
+      - run: python ~/build_setup/build_tag_push.py mvpstudio ./mvpstudio.yml
+
+workflows:
+  version: 2
+  my-workflow:
+    jobs:
+      - build
+      - deploy:
+          context: deploy
+          requires:
+            - build

@@ -7,7 +7,7 @@
 		"^.+\\.(ts|tsx)$": "./node_modules/ts-jest/preprocessor.js"
 	},
 	"testMatch": [
-		"**/__tests__/**/*.test.ts"
+		"src/server/**/__tests__/**/*.test.ts"
 	],
 	"modulePaths": [
 		"<rootDir>/src"
