@@ -98,5 +98,8 @@
 		"typescript": "^3.2.4",
 		"webpack": "^4.0.0",
 		"webpack-command": "^0.4.1"
+	},
+	"resolutions": {
+		"merge": "^1.2.1"
 	}
 }
