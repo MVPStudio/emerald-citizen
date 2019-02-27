@@ -33,14 +33,14 @@ spec:
         image: postgres
         resources:
            limits:
-              cpu: 0.25
-              memory: 250Mi
+              cpu: 0.5
+              memory: 500Mi
            requests:
-              cpu: 0.25
-              memory: 250Mi
+              cpu: 0.5
+              memory: 500Mi
         env:
         - name: PGDATA
-          value: /data
+          value: /datamount/pgdata
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
@@ -56,7 +56,7 @@ spec:
           name: postgres
         volumeMounts:
         - name: pgdata
-          mountPath: /datamount/data
+          mountPath: /datamount
   volumeClaimTemplates:
   - metadata:
       name: pgdata
