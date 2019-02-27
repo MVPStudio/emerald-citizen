@@ -33,11 +33,11 @@ spec:
         image: postgres
         resources:
            limits:
-              cpu: 0.5
-              memory: 500Mi
+              cpu: 0.25
+              memory: 250Mi
            requests:
-              cpu: 0.5
-              memory: 500Mi
+              cpu: 0.25
+              memory: 250Mi
         env:
         - name: PGDATA
           value: /datamount/pgdata
