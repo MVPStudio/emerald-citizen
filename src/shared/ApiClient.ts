@@ -20,6 +20,7 @@ export class ApiClient {
 	public readonly me = {
 		get: () => this.client.get<User | null>(this.meUrl),
 		reports: () => this.client.get<ReportDetails[]>(`${this.meUrl}/reports`),
+		updatePassword: (password: string) => this.client.post<void>(`${this.meUrl}/update-password`, { password })
 	}
 
 	public readonly users = {

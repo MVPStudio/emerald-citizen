@@ -13,7 +13,7 @@ import { ReportsMapPage } from '../report/reports-map/ReportsMapPage';
 import { IndexPage } from '../static_pages/IndexPage';
 import { AuthStore } from 'ui/auth/AuthStore';
 import { UserTablePageContainer } from 'ui/user/users-table/UsersTablePageContainer';
-import { UpdatePasswordPageContainer } from 'ui/user/update-password/UpdatePasswordPageContainer';
+import { UpdatePasswordPageContainer, MeUpdatePasswordPageContainer } from 'ui/user/update-password/UpdatePasswordPageContainer';
 import { NewUserPageContainer } from 'ui/user/new-user/NewUserPageContainer';
 import { ReportsSearchPageContainer } from 'ui/report/reports-search/ReportsSearchPageContainer';
 
@@ -112,6 +112,12 @@ export const routes: ComponentRoute[] = [
 		name: 'userUpdatePassword',
 		path: '/users/:id/update-password',
 		component: UpdatePasswordPageContainer,
+		canActivate: mustBeLoggedIn
+	},
+	{
+		name: 'meUpdatePassword',
+		path: '/update-password',
+		component: MeUpdatePasswordPageContainer,
 		canActivate: mustBeLoggedIn
 	},
 	{

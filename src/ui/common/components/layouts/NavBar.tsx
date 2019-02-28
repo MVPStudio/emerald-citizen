@@ -57,6 +57,14 @@ export class NavBarComponent extends React.Component<NavBarComponentProps, NavBa
 			)
 		}
 
+		if (role === UserRole.reporter) {
+			navLinks.push(
+				<Link key='navUpdatePassword' routeName='meUpdatePassword'>
+					<ListItem caption='Update Password' disabled={currentRoute === 'meUpdatePassword'} />
+				</Link>
+			);
+		}
+
 		if (role === UserRole.admin || role === UserRole.analyst) {
 			navLinks.push(
 				<ListDivider key='analystDivider' />,

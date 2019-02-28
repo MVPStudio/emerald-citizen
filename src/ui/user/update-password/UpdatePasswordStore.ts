@@ -3,6 +3,7 @@ import { uiApiClient } from 'ui/common/uiApiClient';
 import { User } from 'shared/ApiClient';
 import { RouterStore } from '../../routing/RouterStore';
 import { UpdatePasswordPageProps } from './UpatePasswordPage';
+import { AuthStore } from 'ui/auth/AuthStore';
 
 export class UpdatePasswordStore {
 
@@ -14,7 +15,8 @@ export class UpdatePasswordStore {
 
 	constructor(
 		private apiClient = uiApiClient,
-		private routerStore = RouterStore.getInstance()
+		private routerStore = RouterStore.getInstance(),
+		private authStore = AuthStore.getInstance()
 	) { }
 
 	@observable.ref
@@ -24,18 +26,12 @@ export class UpdatePasswordStore {
 	private password: string = '';
 
 	@observable.ref
-	private fetching = true;
+	private fetching = false;
 
 	@computed
 	private get disabled() {
 		return this.password.length < 5;
 	}
-
-	@observable.ref
-	private success = false;
-
-	@observable.ref
-	private error = false;
 
 	@action.bound
 	public async fetchUser() {
@@ -65,6 +61,13 @@ export class UpdatePasswordStore {
 		}
 	}
 
+	@action.bound
+	public async meSubmit() {
+		await this.apiClient.me.updatePassword(this.password);
+		this.resetPassword();
+		this.routerStore.router.navigate('newReport')
+	}
+
 	@action
 	private resetPassword() {
 		this.password = ''
@@ -79,7 +82,22 @@ export class UpdatePasswordStore {
 			disabled: this.disabled,
 			fetchUser: this.fetchUser,
 			updatePassword: this.updatePassword,
-			submit: this.submit
+			submit: this.submit,
+			resetPassword: this.resetPassword
+		}
+	}
+
+	@computed
+	public get propsForCurrentUserUpdatePassword(): UpdatePasswordPageProps {
+		return {
+			user: this.authStore.user,
+			password: this.password,
+			fetching: this.fetching,
+			disabled: this.disabled,
+			fetchUser: this.authStore.fetchCurrentUser,
+			updatePassword: this.updatePassword,
+			submit: this.meSubmit,
+			resetPassword: this.resetPassword
 		}
 	}
 }

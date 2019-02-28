@@ -16,15 +16,13 @@ export interface UpdatePasswordPageProps {
 	fetchUser: VoidFunction;
 	updatePassword: (pw: string) => void;
 	submit: VoidFunction;
+	resetPassword: VoidFunction;
 }
 
 export class UpdatePasswordPage extends React.Component<UpdatePasswordPageProps> {
-	constructor(props: UpdatePasswordPageProps) {
-		super(props);
-		this.state = {
-			showAddendumDialog: false,
-			addendumText: ''
-		}
+	state = {
+		showAddendumDialog: false,
+		addendumText: ''
 	}
 
 	componentDidMount() {
@@ -33,7 +31,7 @@ export class UpdatePasswordPage extends React.Component<UpdatePasswordPageProps>
 
 	render() {
 		const { fetching, disabled, user, password, updatePassword, submit } = this.props;
-
+		
 		if (fetching) {
 			return null;
 		}

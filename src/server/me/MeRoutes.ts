@@ -14,4 +14,10 @@ export const getMeRoutes = (reportService = ReportService.getInstance(), userSer
 			(req: Request, res: Response) => {
 				res.sendPromise(reportService.findByUserId(getSessionUserId(req)));
 			}
+		])
+		.post('/update-password', [
+			(req: Request, res: Response) => {
+				const { password } = req.body;
+				res.sendPromise(userService.update(getSessionUserId(req), { password }).then(() => undefined));
+			}
 		]);
