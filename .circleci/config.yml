@@ -26,6 +26,7 @@ jobs:
           at: /build-output
       - setup_remote_docker:
           docker_layer_caching: true
+      - run: python /build/build_tag_push.py
 
   deploy:
     docker:
