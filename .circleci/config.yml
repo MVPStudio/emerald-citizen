@@ -23,15 +23,10 @@ jobs:
       - image: circleci/python:3
     steps:
       - attach_workspace:
-          at: build-output
+          at: ./
       - setup_remote_docker:
           docker_layer_caching: true
-      - run:
-          name: Build/Tag/Push Docker Image
-          command: |
-            curl https://raw.githubusercontent.com/MVPStudio/build_setup/scott/build_tag_push.sh | bash
-            cd build-output
-            python ../build_setup/build_tag_push.py
+      - run: curl https://raw.githubusercontent.com/MVPStudio/build_setup/scott/build_tag_push.sh | bash
 
   deploy:
     docker:
