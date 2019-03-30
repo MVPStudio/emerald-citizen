@@ -20,13 +20,19 @@ jobs:
 
   publish:
     docker:
-      - image: mvpstudio/build_tag_push:latest
+      - image: circleci/python:3
     steps:
       - attach_workspace:
-          at: /build-output
+          at: build-output
       - setup_remote_docker:
           docker_layer_caching: true
-      - run: python /build/build_tag_push.py
+      - run:
+          name: Build/Tag/Push Docker Image
+          command: |
+            git clone -b scott https://github.com/MVPStudio/build_setup.git
+            pip install -r ./build_setup/requirements.txt
+            cd build-output
+            python ../build_setup/build_tag_push.py
 
   deploy:
     docker:
@@ -58,6 +64,9 @@ workflows:
           context: dockerhub-publish
           requires:
             - build
+          filters:
+            branches:
+              only: master
       - deploy:
           context: k8-deploy
           requires:
