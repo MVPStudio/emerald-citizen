@@ -30,7 +30,7 @@ jobs:
           name: Build/Tag/Push Docker Image
           command: |
             git clone -b scott https://github.com/MVPStudio/build_setup.git
-            pip install -r ./build_setup/requirements.txt
+            sudo pip install -r ./build_setup/requirements.txt
             cd build-output
             python ../build_setup/build_tag_push.py
 
