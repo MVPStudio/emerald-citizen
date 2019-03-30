@@ -11,7 +11,7 @@ jobs:
       - run: yarn build
       - persist_to_workspace:
           root: ./
-          # must include anything needed by the Dockerfile, mvpstudio.yml, .git, and kube folder
+          # must include anything needed to build/tag/push docker image
           paths:
             - build
             - .mvpstudio
@@ -29,8 +29,7 @@ jobs:
       - run:
           name: Build/Tag/Push Docker Image
           command: |
-            git clone -b scott https://github.com/MVPStudio/build_setup.git
-            sudo pip install -r ./build_setup/requirements.txt
+            curl https://raw.githubusercontent.com/MVPStudio/build_setup/scott/build_tag_push.sh | bash
             cd build-output
             python ../build_setup/build_tag_push.py
 
