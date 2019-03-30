@@ -20,20 +20,12 @@ jobs:
 
   publish:
     docker:
-      - image: circleci/python:3
+      - image: mvpstudio/build_tag_push:latest
     steps:
       - attach_workspace:
-          at: ./build-output
+          at: /build-output
       - setup_remote_docker:
           docker_layer_caching: true
-      - run:
-          name: Build/Tag/Push Docker Image
-          command: |
-            git clone -b test https://github.com/MVPStudio/build_setup.git
-            echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
-            sudo pip install pyyaml
-            cd ./build-output
-            python ../build_setup/build_tag_push.py mvpstudio ./mvpstudio.yml
 
   deploy:
     docker:
