@@ -6,6 +6,9 @@
         display: inline-block;
     }
     &:not(.displayInline) .chip {
-        margin-bottom: 4px
+        margin-bottom: 20px
+    }
+    .clearButton {
+        float: right;
     }
 }

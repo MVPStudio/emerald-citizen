@@ -40,7 +40,9 @@ export class NewReportFormStore {
 		navigateToEditVehicleForm: this.navigateToEditVehicleForm,
 		uploadFile: this.uploadFile,
 		fileUploading: this.fileUploading.get(),
-		removeFile: this.removeFile
+		removeFile: this.removeFile,
+		removePerson: this.removePerson,
+		removeVehicle: this.removeVehicle
 	}));
 
 	public geoLocationProps: IComputedValue<GeoLocationProps> = computed(() => ({
@@ -272,6 +274,24 @@ export class NewReportFormStore {
 		return Object.values(this.focusedPersonUpdates.get()).filter(item => item != null).length > 0;
 	}
 
+	private removePerson = action((person: CreatePersonRequest, indexInCategory: number) => {
+		const people = this.report.get().people || [];
+		let categoryIndex = 0;
+		
+		for (let i = 0; i < people.length; i++) {
+			const p = people[i];
+
+			if (p.category === person.category) {
+				if (categoryIndex === indexInCategory) {
+					people.splice(i, 1);
+					this.updateReport({ people });
+					break;
+				}
+				categoryIndex++;
+			}
+		}		
+	});
+
 	/**
 	 * New/Edit Vehicle Form State
 	 */
@@ -348,6 +368,12 @@ export class NewReportFormStore {
 	private resetVehicle() {
 		this.focusedVehicleUpdates.set({});
 	}
+
+	private removeVehicle = action((index: number) => {
+		const vehicles = this.report.get().vehicles || [];
+		vehicles.splice(index, 1);
+		this.updateReport({ vehicles });
+	});
 
 	@action.bound
 	private navigateToNewVehicleForm() {
