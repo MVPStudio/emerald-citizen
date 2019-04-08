@@ -246,7 +246,7 @@ export class ReportPage extends React.Component<ReportPageProps, ReportPageState
 	private updateAddendumText = (addendumText: string) => this.setState({ addendumText });
 
 	private renderListItem = ([name, value]: [string, any], index: number) => {
-		if (value == null) {
+		if (value == null || value === false) {
 			return null;
 		}
 
