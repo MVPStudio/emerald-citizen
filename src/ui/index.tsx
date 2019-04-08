@@ -1,3 +1,6 @@
+import 'core-js/es/object';
+import 'core-js/es/array';
+import 'core-js/es/string';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { NavBar } from './common/components/layouts/NavBar';
