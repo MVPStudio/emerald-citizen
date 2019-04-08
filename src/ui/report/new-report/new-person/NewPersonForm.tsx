@@ -47,11 +47,12 @@ export class NewPersonForm extends React.Component<NewPersonFormProps> {
 			has_tatoos
 		} = person;
 		const categoryDisplay = (category || '').replace('_', ' ');
+		const isNewPerson = personIndex == null;
 
 		return (
 			<Card>
 				<form onSubmit={this.onSubmit} className={classes.personForm}>
-					<h1>{personIndex == null ? `Add ${categoryDisplay}` : `Edit ${categoryDisplay} ${personIndex}`}</h1>
+					<h1>{isNewPerson ? `Add ${categoryDisplay}` : `Edit ${categoryDisplay} ${personIndex}`}</h1>
 					<Input
 						label='Name'
 						onChange={this.updateField('name')}
@@ -121,7 +122,7 @@ export class NewPersonForm extends React.Component<NewPersonFormProps> {
 						onChange={this.updateField('details')}
 						value={details}
 					/>
-					<Button label='Clear' raised={true} primary={false} onClick={resetPerson} />
+					{ isNewPerson && <Button label='Clear' raised={true} primary={false} onClick={resetPerson} /> }
 					<Button className={classes.submitButton} type='submit' label='Save' raised={true} primary={true} disabled={!allowSavePerson} />
 				</form>
 			</Card>
