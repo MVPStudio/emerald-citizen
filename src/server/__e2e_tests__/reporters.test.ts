@@ -1,5 +1,5 @@
 import { createTestClient, loginAsReporter } from './testsClient';
-import { CreateReportRequest, PersonSex, PersonCategory } from 'shared/ApiClient';
+import { CreateReportRequest, PersonSex, PersonCategory, HairLength } from 'shared/ApiClient';
 
 describe('reporters', () => {
 
@@ -20,10 +20,12 @@ describe('reporters', () => {
 				height: 'height',
 				weight: 'weight',
 				hair_color: 'hair_color',
-				hair_length: 'hair_length',
+				hair_length: HairLength.bald,
 				eye_color: 'eye_color',
 				skin_color: 'skin_color',
 				sex: PersonSex.male,
+				has_piercings: true,
+				has_tatoos: true,
 				details: 'details',
 				category: PersonCategory.suspicious_person
 			}],

@@ -2,9 +2,18 @@ import * as React from 'react';
 import Input from 'react-toolbox/lib/input';
 import Button from 'react-toolbox/lib/button';
 import { CreatePersonRequest } from 'shared/ApiClient';
-import { SEX_OPTIONS, HAIR_COLOR_OPTIONS, EYE_COLOR_OPTIONS, HEIGHT_OPTIONS, WEIGHT_OPTIONS, AGE_OPTIONS } from '../../common/personOptions';
+import { 
+	SEX_OPTIONS, 
+	HAIR_COLOR_OPTIONS, 
+	HAIR_LENGTH_OPTIONS,
+	EYE_COLOR_OPTIONS, 
+	HEIGHT_OPTIONS, 
+	WEIGHT_OPTIONS, 
+	AGE_OPTIONS 
+} from '../../common/personOptions';
 import { Select } from 'ui/common/components/Select';
 import Card from 'react-toolbox/lib/card';
+import Checkbox from 'react-toolbox/lib/checkbox';
 
 const classes = require('./NewPersonForm.css');
 
@@ -21,7 +30,21 @@ export class NewPersonForm extends React.Component<NewPersonFormProps> {
 
 	render() {
 		const { allowSavePerson, person, resetPerson, personIndex } = this.props;
-		const { name, category, age, sex, hair_color, eye_color, height, weight, hair_length, skin_color, details } = person;
+		const { 
+			name, 
+			category, 
+			age, 
+			sex, 
+			hair_color, 
+			eye_color, 
+			height, 
+			weight, 
+			hair_length, 
+			skin_color, 
+			details,
+			has_piercings,
+			has_tatoos
+		} = person;
 		const categoryDisplay = (category || '').replace('_', ' ');
 
 		return (
@@ -68,9 +91,10 @@ export class NewPersonForm extends React.Component<NewPersonFormProps> {
 						options={HAIR_COLOR_OPTIONS}
 						value={hair_color || ''}
 					/>
-					<Input
-						label='Hair Length'
+					<Select
 						onChange={this.updateField('hair_length')}
+						label='Hair Length'
+						options={HAIR_LENGTH_OPTIONS}
 						value={hair_length || ''}
 					/>
 					<Select
@@ -78,6 +102,16 @@ export class NewPersonForm extends React.Component<NewPersonFormProps> {
 						label='Eye Color'
 						options={EYE_COLOR_OPTIONS}
 						value={eye_color || ''}
+					/>
+					<Checkbox
+						checked={has_tatoos || false}
+						label='Has Tatoos?'
+						onChange={this.updateField('has_tatoos')}
+					/>
+					<Checkbox
+						checked={has_piercings || false}
+						label='Has Piercings?'
+						onChange={this.updateField('has_piercings')}
 					/>
 					<Input
 						multiline={true}

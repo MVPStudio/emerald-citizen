@@ -169,7 +169,9 @@ export class ReportPage extends React.Component<ReportPageProps, ReportPageState
 												'hair_color',
 												'hair_length',
 												'eye_color',
-												'details'
+												'details',
+												'has_tatoos',
+												'has_piercings'
 											])
 										)
 											.map(this.renderListItem),
@@ -243,7 +245,15 @@ export class ReportPage extends React.Component<ReportPageProps, ReportPageState
 
 	private updateAddendumText = (addendumText: string) => this.setState({ addendumText });
 
-	private renderListItem = ([name, value]: [string, any], index: number) => value == null
-		? null
-		: <ListItem ripple={false} caption={value} legend={name.replace('_', ' ')} key={index} />;
+	private renderListItem = ([name, value]: [string, any], index: number) => {
+		if (value == null) {
+			return null;
+		}
+
+		if (value === true) {
+			return <ListItem ripple={false} caption={name.replace('_', ' ')} key={index} />;	
+		}
+		
+		return <ListItem ripple={false} caption={value} legend={name.replace('_', ' ')} key={index} />;
+	}
 }
