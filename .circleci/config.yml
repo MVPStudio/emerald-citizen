@@ -36,3 +36,6 @@ workflows:
           context: dockerhub-publish
           requires:
             - build
+          filters:
+            branches:
+              only: master
