@@ -121,7 +121,7 @@ export class NewPersonForm extends React.Component<NewPersonFormProps> {
 						onChange={this.updateField('details')}
 						value={details}
 					/>
-					<Button label='Reset' raised={true} primary={false} onClick={resetPerson} />
+					<Button label='Clear' raised={true} primary={false} onClick={resetPerson} />
 					<Button className={classes.submitButton} type='submit' label='Save' raised={true} primary={true} disabled={!allowSavePerson} />
 				</form>
 			</Card>

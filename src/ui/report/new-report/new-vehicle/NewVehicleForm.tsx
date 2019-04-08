@@ -58,7 +58,7 @@ export class NewVehicleForm extends React.Component<NewVehicleFormProps> {
 						hint='Please write any other notable characteristics.'
 						onChange={this.updateField('details')}
 					/>
-					<Button label='Reset' raised={true} primary={false} onClick={resetVehicle} />
+					<Button label='Clear' raised={true} primary={false} onClick={resetVehicle} />
 					<Button className={classes.submitButton} type='submit' label='Save' raised={true} primary={true} disabled={!allowSaveVehicle} />
 				</form>
 			</Card>
