@@ -86,6 +86,14 @@ export const HAIR_COLOR_OPTIONS = [
 	{ value: 'unnatural', label: 'Unnatural (please describe in other section)' },
 ];
 
+export const HAIR_LENGTH_OPTIONS = [
+	{ value: 'bald', label: 'Bald' },
+	{ value: 'shaved', label: 'Shaved' },
+	{ value: 'short', label: 'Short' },
+	{ value: 'medium', label: 'Medium' },
+	{ value: 'long', label: 'Long' }
+]
+
 export const EYE_COLOR_OPTIONS = [
 	{ value: 'amber', label: 'Amber' },
 	{ value: 'blue', label: 'Blue' },

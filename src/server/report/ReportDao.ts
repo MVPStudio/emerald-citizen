@@ -326,17 +326,27 @@ export enum PersonSex {
 	unsure = 'unsure'
 }
 
+export enum HairLength {
+	bald = 'bald',
+	shaved = 'shaved',
+	short = 'short',
+	medium = 'medium',
+	long = 'long'
+}
+
 export interface CreatePersonPersistence {
 	name: string | null;
 	height: string | null;
 	age: string | null;
 	weight: string | null;
 	hair_color: string | null;
-	hair_length: string | null;
+	hair_length: HairLength | null;
 	eye_color: string | null;
 	skin_color: string | null;
 	sex: PersonSex | null;
 	details: string | null;
+	has_tatoos: boolean | null;
+	has_piercings: boolean | null;
 	category: PersonCategory;
 }
 
