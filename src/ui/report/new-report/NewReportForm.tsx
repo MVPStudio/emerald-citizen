@@ -152,7 +152,7 @@ export class NewReportForm extends React.Component<NewReportFormProps> {
 								: <Input type='file' onChange={this.uploadFile}/>
 						}
 					</div>
-					<Button label='Reset' raised={true} accent={true} onClick={resetReport}/>
+					<Button label='Clear' raised={true} accent={true} onClick={resetReport}/>
 					<Button className={classes.submitButton} type='submit' label='Submit' raised={true} primary={true}/>
 				</form>
 			</Card>
