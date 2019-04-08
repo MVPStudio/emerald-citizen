@@ -9,7 +9,8 @@ import {
 	EYE_COLOR_OPTIONS, 
 	HEIGHT_OPTIONS, 
 	WEIGHT_OPTIONS, 
-	AGE_OPTIONS 
+	AGE_OPTIONS ,
+	SKIN_TONE_OPTIONS
 } from '../../common/personOptions';
 import { Select } from 'ui/common/components/Select';
 import Card from 'react-toolbox/lib/card';
@@ -68,10 +69,11 @@ export class NewPersonForm extends React.Component<NewPersonFormProps> {
 						options={SEX_OPTIONS}
 						value={sex || ''}
 					/>
-					<Input
-						label='Observed Race'
-						value={skin_color}
+					<Select
 						onChange={this.updateField('skin_color')}
+						label='Skin Tone'
+						options={SKIN_TONE_OPTIONS}
+						value={skin_color || ''}
 					/>
 					<Select
 						onChange={this.updateField('height')}

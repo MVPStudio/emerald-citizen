@@ -1,5 +1,5 @@
 import { createTestClient, loginAsAdmin, loginAsAnalyst } from './testsClient';
-import { CreateReportRequest, PersonSex, HairLength } from 'shared/ApiClient';
+import { CreateReportRequest, PersonSex, HairLength, SkinColor } from 'shared/ApiClient';
 import { PersonCategory } from '../report/ReportDao';
 
 describe('analysts', () => {
@@ -22,7 +22,7 @@ describe('analysts', () => {
 				hair_color: 'hair_color',
 				hair_length: HairLength.bald,
 				eye_color: 'eye_color',
-				skin_color: 'skin_color',
+				skin_color: SkinColor.fair,
 				sex: PersonSex.male,
 				has_piercings: true,
 				has_tatoos: true,

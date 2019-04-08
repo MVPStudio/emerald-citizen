@@ -103,3 +103,11 @@ export const EYE_COLOR_OPTIONS = [
 	{ value: 'hazel', label: 'Hazel' },
 	{ value: 'red_violet', label: 'Red/Violet' },
 ];
+
+export const SKIN_TONE_OPTIONS = [
+	{ value: 'pale', label: 'Pale' },
+	{ value: 'fair', label: 'Fair' },
+	{ value: 'light brown', label: 'Light Brown' },
+	{ value: 'dark brown', label: 'Dark Brown' },
+	{ value: 'black', label: 'Black' }
+];
