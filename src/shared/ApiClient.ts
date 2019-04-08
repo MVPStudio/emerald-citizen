@@ -165,6 +165,14 @@ export enum HairLength {
 	long = 'long'
 }
 
+export enum SkinColor {
+	pale = 'pale',
+	fair = 'fair',
+	light_brown = 'light brown',
+	dark_brown = 'dark brown',
+	black = 'black'
+}
+
 export interface CreatePersonRequest {
 	name: string | null;
 	age: string | null;
@@ -173,7 +181,7 @@ export interface CreatePersonRequest {
 	hair_color: string | null;
 	hair_length: HairLength | null;
 	eye_color: string | null;
-	skin_color: string | null;
+	skin_color: SkinColor | null;
 	sex: PersonSex | null;
 	details: string | null;
 	category: PersonCategory;
