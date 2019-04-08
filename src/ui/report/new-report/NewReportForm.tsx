@@ -23,11 +23,13 @@ export interface NewReportFormProps {
 	uploadFile: (file: File) => void;
 	fileUploading: boolean;
 	removeFile: (idx: number) => void;
+	removePerson: (person: CreatePersonRequest, idx: number) => void;
+	removeVehicle: (idx: number) => void;
 }
 
 export class NewReportForm extends React.Component<NewReportFormProps> {
 	render() {
-		const { report, fileUrls, resetReport, fileUploading } = this.props;
+		const { report, fileUrls, resetReport, fileUploading, removePerson } = this.props;
 		const people = report.people || [];
 		const vehicles = report.vehicles || [];
 		const date = moment(report.date ? parseInt(report.date, 10) : Date.now());
@@ -91,6 +93,7 @@ export class NewReportForm extends React.Component<NewReportFormProps> {
 						onChipAdd={this.handleNewPerson('suspicious_person')}
 						onChipClick={this.editPerson}
 						getTitle={this.getNewPersonTitle}
+						onDelete={removePerson}
 					/>
 					<ChipField
 						label='Buyer(s)'
@@ -101,6 +104,7 @@ export class NewReportForm extends React.Component<NewReportFormProps> {
 						onChipAdd={this.handleNewPerson('buyer')}
 						onChipClick={this.editPerson}
 						getTitle={this.getNewPersonTitle}
+						onDelete={removePerson}
 					/>
 					<ChipField
 						label='Victim(s)'
@@ -111,6 +115,7 @@ export class NewReportForm extends React.Component<NewReportFormProps> {
 						onChipAdd={this.handleNewPerson('victim')}
 						onChipClick={this.editPerson}
 						getTitle={this.getNewPersonTitle}
+						onDelete={removePerson}
 					/>
 					<ChipField
 						label='Vehicle(s)'
@@ -121,6 +126,7 @@ export class NewReportForm extends React.Component<NewReportFormProps> {
 						onChipAdd={this.handleVehicleAdd}
 						onChipClick={this.editVehicle}
 						getTitle={this.getVehicleTitle}
+						onDelete={this.handleRemoveVehicle}
 					/>
 					<br/>
 					<Input
@@ -206,6 +212,7 @@ export class NewReportForm extends React.Component<NewReportFormProps> {
 
 	private handleVehicleAdd = () => this.props.navigateToNewVehicleForm();
 	private editVehicle = (vehicle: CreateVehicleRequest, index: number) => this.props.navigateToEditVehicleForm(index);
+	private handleRemoveVehicle = (vehicle: CreateVehicleRequest, index: number) => this.props.removeVehicle(index);
 
 	private getVehicleTitle = ({ make, model, color }: CreateVehicleRequest) => {
 		return `${make || ''} ${model || ''} ${color || ''}`;
