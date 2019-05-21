@@ -1,0 +1,12 @@
+.uploadFiles {
+    .removeFileButton {
+		margin: 10px 0;
+    }
+    
+    .fileUploadButton {
+		margin: 10px 0 50px 0;
+		h3 {
+			font-weight: normal;
+		}
+	}
+}

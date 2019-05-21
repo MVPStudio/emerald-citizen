@@ -13,9 +13,9 @@ const isProduction = process.env.NODE_ENV === 'production';
 const workerCount = getEnvNumber('WORKER_COUNT') || cpus().length;
 
 export const config = {
-	isDevelopment: process.env.NODE_ENV === 'development',
+	hideTestBanner: getEnvBoolean('HIDE_TEST_BANNER'),
 	isProduction,
-	isTest: process.env.NODE_ENV === 'test',
+	isTest: getEnvString('NODE_ENV') === 'test',
 	serverPort: getEnvNumber('SERVER_PORT') || 8080,
 	workerCount,
 	sessionSecret: getEnvString('SESSION_SECRET'),

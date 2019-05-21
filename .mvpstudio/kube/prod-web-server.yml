@@ -38,6 +38,8 @@ spec:
         env: 
         - name: NODE_ENV
           value: production
+        - name: HIDE_TEST_BANNER
+          value: 'true'
         - name: DATABASE_PASSWORD
           valueFrom:
             secretKeyRef:

@@ -105,8 +105,8 @@ export const EYE_COLOR_OPTIONS = [
 ];
 
 export const SKIN_TONE_OPTIONS = [
-	{ value: 'pale', label: 'Pale' },
-	{ value: 'fair', label: 'Fair' },
+	{ value: 'pale', label: 'Pale White' },
+	{ value: 'fair', label: 'Fair White' },
 	{ value: 'light brown', label: 'Light Brown' },
 	{ value: 'dark brown', label: 'Dark Brown' },
 	{ value: 'black', label: 'Black' }

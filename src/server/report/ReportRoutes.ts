@@ -34,7 +34,8 @@ export const getReportRoutes = (
 			(req: Request, res: Response) => {
 				const addendum: CreateReportAddendumRequest = {
 					report_id: parseInt(req.params.id, 10),
-					text: req.body.text as string
+					text: req.body.text as string,
+					files: req.body.files
 				};
 
 				res.sendPromise(reportService.addAddendum(getSessionUserId(req), addendum));

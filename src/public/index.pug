@@ -7,6 +7,17 @@ html(lang="en")
 		link(type="text/css" rel="stylesheet" href="/static/styles.css")
 		meta(name="csrf-token" content=csrfToken)
 	body(id="body")
+		if !hideTestBanner
+			style.
+				.test-banner {
+					text-align: center;
+					background: #f7554a;
+					padding: 5px;
+					font-size: 15px;
+					color: #ffffff;
+					font-family: Roboto, Helvetica, Arial, sans-serif;
+				}
+			div.test-banner THIS IS THE TEST ENVIRONMENT
 		div(id="root")
 			script(type="text/javascript" src!="https://maps.googleapis.com/maps/api/js?libraries=places&key="+mapsApiKey)
 			script(type="text/javascript" src="/static/bundle.js")

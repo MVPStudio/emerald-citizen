@@ -113,20 +113,32 @@ export class ReportDao {
 		return createdReport;
 	}
 
-	public async addAddendum(req: CreateReportAddendumPersistence) {
+	public async addAddendum({ report_id, text, files }: CreateReportAddendumPersistence) {
 		return await this.dbClient.transaction(async (trx) => {
 			const addendum = await this.dbClient(ReportDao.addendumTableName)
 				.transacting(trx)
-				.insert(req)
+				.insert({ report_id, text })
 				.returning('*')
 				.get(0);
+
+			if (files != null) {
+				await this.dbClient
+					.batchInsert(
+						ReportDao.fileTableName,
+						files.map(({ filename }) => ({
+							filename,
+							report_id
+						}))
+					)
+					.transacting(trx);
+			}
 
 			await this.dbClient(ReportDao.tableName)
 				.transacting(trx)
 				.update({
 					updated: new Date()
 				})
-				.where({ id: req.report_id });
+				.where({ id: report_id });
 
 			return addendum;
 		});
@@ -366,6 +378,7 @@ export interface PersonPersistence extends CreatePersonPersistence, TimestampedP
 export interface CreateReportAddendumPersistence {
 	report_id: number;
 	text: string;
+	files?: CreateFilePersistence[];
 }
 
 export interface ReportAddendumPersistence extends CreateReportAddendumPersistence, TimestampedPersistence {

@@ -7,6 +7,7 @@ import { ChipField } from '../common/ChipField';
 import * as moment from 'moment';
 import { GeoLocationContainer } from './geolocation/GeoLocationContainer';
 import Card from 'react-toolbox/lib/card';
+import { UploadFiles } from '../common/UploadFiles';
 
 const classes = require('./NewReportForm.css');
 
@@ -29,7 +30,15 @@ export interface NewReportFormProps {
 
 export class NewReportForm extends React.Component<NewReportFormProps> {
 	render() {
-		const { report, fileUrls, resetReport, fileUploading, removePerson } = this.props;
+		const { 
+			report, 
+			fileUrls, 
+			resetReport, 
+			fileUploading, 
+			removePerson,
+			uploadFile,
+			removeFile
+		} = this.props;
 		const people = report.people || [];
 		const vehicles = report.vehicles || [];
 		const date = moment(report.date ? parseInt(report.date, 10) : Date.now());
@@ -138,38 +147,18 @@ export class NewReportForm extends React.Component<NewReportFormProps> {
 						onChange={this.setValueHandler('details')}
 					/>
 					<br/>
-					{fileUrls.map((url, index) => (
-							<div className={classes.uploadedFile} key={index}> 
-								<img src={url} width='500px' /> 
-								<Button 
-									className={classes.removeFileButton}
-									label='Remove' 
-									raised={true}
-									accent={true}
-									mini={true}
-									onClick={this.removeFileHandler(index)}
-								/>
-							</div>
-					))}
-					<div className={classes.fileUploadButton}>
-						{ 
-							fileUploading 
-								? <h3>Uploading...</h3>
-								: <Input type='file' onChange={this.uploadFile}/>
-						}
-					</div>
+					<UploadFiles 
+						fileUrls={fileUrls}
+						uploadFile={uploadFile}
+						fileUploading={fileUploading}
+						removeFile={removeFile}
+					/>
 					<Button label='Clear' raised={true} accent={true} onClick={resetReport}/>
 					<Button className={classes.submitButton} type='submit' label='Submit' raised={true} primary={true}/>
 				</form>
 			</Card>
 		);
 	}
-
-	private uploadFile = (_: string, e: any) => {
-		this.props.uploadFile(e.target.files[0]);
-	}
-
-	private removeFileHandler = (index: number) => () => this.props.removeFile(index);
 
 	private getNewPersonTitle = (person: CreatePersonRequest) => {
 		if (person.name && person.name.trim().length > 0) {

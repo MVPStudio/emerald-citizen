@@ -4,6 +4,7 @@ import { ReportDetails, UserRole } from 'shared/ApiClient';
 import { RouterStore } from '../../routing/RouterStore';
 import { ReportPageProps } from './ReportPage';
 import { AuthStore } from '../../auth/AuthStore';
+import { UploadFilesStore } from '../common/UploadFilesStore';
 
 export class ReportStore {
 
@@ -55,15 +56,6 @@ export class ReportStore {
 	}
 
 	@action.bound
-	private async saveAddendum(text: string) {
-		if (this.report != null && text.length > 0) {
-			this.disabled = true;
-			await this.apiClient.reports.addAddendum(this.report.id, text);
-			await this.fetchReport();
-		}
-	}
-
-	@action.bound
 	public async toggleInteresting() {
 		if (this.report != null) {
 			this.disabled = true;
@@ -89,7 +81,6 @@ export class ReportStore {
 			disabled: this.disabled,
 			fetchReport: this.fetchReport,
 			canAddAddendum: this.canAddAddendum,
-			saveAddendum: this.saveAddendum,
 			isAnalyst: this.isAnalyst,
 			toggleInteresting: this.toggleInteresting,
 			toggleValidated: this.toggleValidated

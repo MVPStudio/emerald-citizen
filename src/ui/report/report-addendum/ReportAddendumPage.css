@@ -1,0 +1,11 @@
+.reportAddendumPage {
+    form {
+        padding: 15px;
+    }
+
+    .text {
+        textarea {
+            min-height: 120px;
+        }
+    }
+}

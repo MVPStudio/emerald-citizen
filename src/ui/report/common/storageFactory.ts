@@ -1,3 +1,5 @@
+import { observable, computed } from 'mobx';
+
 class MemoryStorage implements Storage {
 	private store = {};
 	/**
@@ -59,26 +61,31 @@ try {
 export class StorageItem<T> {
 	constructor(
 		private key: string,
-		private storage: Storage,
-		private defaultValue?: T
+		private storage: Storage
 	) { }
 
-	public get(): T {
+	public readonly value = computed(() => this.obs.get());
+
+	private obs = observable.box<T | null>(this.get())
+
+	public get(): T | null {
 		const item = this.storage.getItem(this.key);
-		return item == null ? this.defaultValue : JSON.parse(item);
+		return item == null ? null : JSON.parse(item);
 	}
 
 	public set(value: T) {
 		this.storage.setItem(this.key, JSON.stringify(value));
+		this.obs.set(value)
 	}
 
 	public clear() {
 		this.storage.removeItem(this.key);
+		this.obs.set(null);
 	}
 }
 
 export class StorageFactory {
-	static create<T>(key: string, defaultValue?: T): StorageItem<T> {
-		return new StorageItem<T>(`emcit.${key}`, globalStorage, defaultValue)
+	static create<T>(key: string): StorageItem<T> {
+		return new StorageItem<T>(`emcit.${key}`, globalStorage)
 	}
 }

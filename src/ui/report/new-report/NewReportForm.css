@@ -24,14 +24,6 @@
 		float: right;
 	}
 
-	.removeFileButton {
-		margin: 10px 0;
-	}
-
-	.fileUploadButton {
-		margin: 10px 0 50px 0;
-	}
-
 	.dateInput, .timeInput {
 		width: 49%;
 	}

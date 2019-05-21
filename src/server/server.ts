@@ -61,6 +61,7 @@ export const runServer = async () => {
 				join(publicDirectory, 'index.pug'),
 				{
 					csrfToken: req.csrfToken(),
+					hideTestBanner: config.hideTestBanner,
 					mapsApiKey: config.googleMapsApiKey
 				}
 			)

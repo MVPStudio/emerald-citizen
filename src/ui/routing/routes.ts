@@ -16,6 +16,7 @@ import { UserTablePageContainer } from 'ui/user/users-table/UsersTablePageContai
 import { UpdatePasswordPageContainer, MeUpdatePasswordPageContainer } from 'ui/user/update-password/UpdatePasswordPageContainer';
 import { NewUserPageContainer } from 'ui/user/new-user/NewUserPageContainer';
 import { ReportsSearchPageContainer } from 'ui/report/reports-search/ReportsSearchPageContainer';
+import { ReportAddendumPageContainer } from 'ui/report/report-addendum/ReportAddendumPageContainer';
 
 const redirectOnLoggedOut = (loggedIn: boolean) => loggedIn ? Promise.resolve(true) : Promise.reject({ redirect: { name: 'login' } })
 const mustBeLoggedIn = () => () => {
@@ -76,6 +77,12 @@ export const routes: ComponentRoute[] = [
 		name: 'report',
 		path: '/report/:id',
 		component: ReportPageContainer,
+		canActivate: mustBeLoggedIn
+	},
+	{
+		name: 'reportAddendum',
+		path: '/report/:id/addendum',
+		component: ReportAddendumPageContainer,
 		canActivate: mustBeLoggedIn
 	},
 	{

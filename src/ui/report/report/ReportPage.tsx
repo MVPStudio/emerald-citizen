@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { MobilePageContainer } from '../../common/components/layouts/MobilePageContainer';
 import { ReportDetails } from 'shared/ApiClient';
-import Card from 'react-toolbox/lib/card';
+import Card, { CardTitle, CardText, CardActions } from 'react-toolbox/lib/card';
 import Checkbox from 'react-toolbox/lib/checkbox';
-import { List, ListItem, ListSubHeader, ListDivider } from 'react-toolbox/lib/list';
+import { ListSubHeader, ListDivider } from 'react-toolbox/lib/list';
 import { pick } from 'lodash';
 import { Button } from 'react-toolbox/lib/button';
-import Dialog from 'react-toolbox/lib/dialog';
-import { Input } from 'react-toolbox/lib/input';
+import { Link } from 'ui/routing/Link';
 
 const classes = require('./ReportPage.css');
 
@@ -17,7 +16,6 @@ export interface ReportPageProps {
 	disabled: boolean;
 	fetchReport: () => void;
 	canAddAddendum: boolean;
-	saveAddendum: (text: string) => void;
 	isAnalyst: boolean;
 	toggleInteresting: () => void;
 	toggleValidated: () => void;
@@ -84,7 +82,12 @@ export class ReportPage extends React.Component<ReportPageProps, ReportPageState
 	}
 
 	render() {
-		const { fetching, disabled, report, canAddAddendum } = this.props;
+		const {
+			fetching,
+			disabled,
+			report,
+			canAddAddendum
+		} = this.props;
 
 		if (fetching) {
 			return null;
@@ -113,96 +116,93 @@ export class ReportPage extends React.Component<ReportPageProps, ReportPageState
 
 		if (canAddAddendum) {
 			reportActions.push(
-				<Button
+				<Link
+					routeName='reportAddendum'
+					routeParams={{ id: report.id }}
 					key='addendum'
-					disabled={disabled}
-					raised={true}
-					primary={true}
-					onClick={this.openAddendumDialog}
 				>
-					Add Addendum
-				</Button>
+					<Button
+						disabled={disabled}
+						raised={true}
+						primary={true}
+					>
+						Add Addendum
+					</Button>
+				</Link>
 			);
 		}
 
 		return (
 			<MobilePageContainer className={classes.reportPage}>
 				<Card>
-					<List>
-						<ListItem
-							ripple={false}
-							caption={(new Date(date || created_at)).toDateString()}
-							legend='date'
-							rightActions={reportActions}
-						/>
-						<ListItem
-							ripple={false}
-							caption={user.username}
-							legend='User'
-						/>
-						{Object.entries({ location, room_number, details, geo_latitude, geo_longitude }).map(this.renderListItem)}
-						{addendums.length > 0 && [
-							<br key='vehiclesBreak' />,
-							<ListSubHeader className={classes.listSubHeader} key='addendumsHeader' caption='Addendums' />,
-							<ListDivider key='addendumsDivider' />
-						]}
-						<div>
-							{addendums.map(({ text }, index) => this.renderListItem(['addendum', text], index))}
-						</div>
-						{people.length > 0 && [
-							<br key='peopleBreak' />,
-							<ListSubHeader className={classes.listSubHeader} key='peopleHeader' caption='People' />,
-							<ListDivider key='peopleDivider' />
-						]}
-						<div>
-							{
-								people.map(
-									(person, index) => ([
-										Object.entries(
-											pick(person, [
-												'category',
-												'name',
-												'sex',
-												'height',
-												'weight',
-												'skin_color',
-												'hair_color',
-												'hair_length',
-												'eye_color',
-												'details',
-												'has_tatoos',
-												'has_piercings'
-											])
-										)
-											.map(this.renderListItem),
-										index < people.length - 1 && <ListDivider inset={true} key={`person-${index}`} />
-									])
-								)
-							}
-						</div>
-						{vehicles.length > 0 && [
-							<br key='vehiclesBreak' />,
-							<ListSubHeader className={classes.listSubHeader} key='vehiclesHeader' caption='Vehicles' />,
-							<ListDivider key='vehiclesDivider' />
-						]}
-						<div>
-							{
-								vehicles.map(
-									(vehicle, index) => [
-										Object.entries(
-											pick(vehicle, [
-												'color',
-												'make',
-												'model',
-												'license_plate'
-											])
-										)
-											.map(this.renderListItem),
-										index < vehicles.length - 1 && <ListDivider key={`vehicle-${index}`} />
-									])
-							}
-						</div>
-					</List>
+					<CardActions>{reportActions}</CardActions>
+					<CardTitle subtitle='Date' />
+					<CardText>{(new Date(date || created_at)).toDateString()}</CardText>
+
+					<CardTitle subtitle='User' />
+					<CardText>{user.username}</CardText>
+
+					{Object.entries({ location, room_number, details, geo_latitude, geo_longitude }).map(this.renderListItem)}
+					{addendums.length > 0 && [
+						<br key='addendumsBreak' />,
+						<CardTitle title='Addendums' key='addendumsHeader' />
+					]}
+					<div>
+						{addendums.map(({ text }, index) => this.renderListItem(['addendum', text], index))}
+					</div>
+					{people.length > 0 && [
+						<br key='peopleBreak' />,
+						<CardTitle title='People' key='peopleHeader' />
+					]}
+					<div>
+						{
+							people.map(
+								(person, index) => ([
+									Object.entries(
+										pick(person, [
+											'category',
+											'name',
+											'sex',
+											'height',
+											'weight',
+											'skin_color',
+											'hair_color',
+											'hair_length',
+											'eye_color',
+											'details',
+											'has_tatoos',
+											'has_piercings'
+										])
+									)
+										.map(this.renderListItem),
+									index < people.length - 1 && <ListDivider inset={true} key={`person-${index}`} />
+								])
+							)
+						}
+					</div>
+					{vehicles.length > 0 && [
+						<br key='vehiclesBreak' />,
+						<ListSubHeader className={classes.listSubHeader} key='vehiclesHeader' caption='Vehicles' />,
+						<ListDivider key='vehiclesDivider' />
+					]}
+					<div>
+						{
+							vehicles.map(
+								(vehicle, index) => [
+									Object.entries(
+										pick(vehicle, [
+											'color',
+											'make',
+											'model',
+											'license_plate'
+										])
+									)
+										.map(this.renderListItem),
+									index < vehicles.length - 1 && <ListDivider key={`vehicle-${index}`} />
+								])
+						}
+					</div>
+
 					{files.length > 0 && [
 						<br key='filesBreak' />,
 						<ListSubHeader className={classes.listSubHeader} key='filesHeader' caption='Files' />,
@@ -210,40 +210,10 @@ export class ReportPage extends React.Component<ReportPageProps, ReportPageState
 					]}
 					{files.map(({ url }, index) => <div className={classes.file} key={index}> <img src={url} width='500px' /> <br /></div>)}
 				</Card>
-
-				<Dialog
-					actions={this.dialogActions}
-					active={this.state.showAddendumDialog}
-					onEscKeyDown={this.closeAddendumDialog}
-					onOverlayClick={this.closeAddendumDialog}
-					title='Add Report Addendum'
-				>
-					{
-						// @ts-ignore: autoFocus missing on type def
-						<Input autoFocus='true' type='text' label='Addendum' style={{ minHeight: '60px' }} multiline={true} onChange={this.updateAddendumText} />}
-
-				</Dialog>
 				{this.renderAnalystActions()}
 			</MobilePageContainer>
 		);
 	}
-
-	private openAddendumDialog = () => this.setState({ showAddendumDialog: true });
-	private closeAddendumDialog = () => this.setState({ showAddendumDialog: false });
-
-	private dialogActions = [
-		{ label: 'Cancel', onClick: this.closeAddendumDialog },
-		{
-			label: 'Save',
-			primary: true,
-			onClick: () => {
-				this.props.saveAddendum(this.state.addendumText);
-				this.closeAddendumDialog();
-			}
-		}
-	]
-
-	private updateAddendumText = (addendumText: string) => this.setState({ addendumText });
 
 	private renderListItem = ([name, value]: [string, any], index: number) => {
 		if (value == null || value === false) {
@@ -251,9 +221,14 @@ export class ReportPage extends React.Component<ReportPageProps, ReportPageState
 		}
 
 		if (value === true) {
-			return <ListItem ripple={false} caption={name.replace('_', ' ')} key={index} />;	
+			return <CardTitle subtitle={name.replace('_', ' ')} />;
 		}
-		
-		return <ListItem ripple={false} caption={value} legend={name.replace('_', ' ')} key={index} />;
+
+		return (
+			<div>
+				<CardTitle subtitle={name.replace('_', ' ')} />
+				<CardText>{value}</CardText>
+			</div>
+		);
 	}
 }

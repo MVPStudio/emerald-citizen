@@ -7,6 +7,7 @@ import { NewPersonFormProps } from './new-person/NewPersonForm';
 import { GeoLocationProps } from './geolocation/GeoLocation';
 import { StorageFactory } from '../common/storageFactory';
 import { NewVehicleFormProps } from './new-vehicle/NewVehicleForm';
+import { UploadFilesStore } from '../common/UploadFilesStore';
 const debounce = require('lodash.debounce');
 
 export class NewReportFormStore {
@@ -21,8 +22,8 @@ export class NewReportFormStore {
 		private apiClient = uiApiClient,
 		private routerStore = RouterStore.getInstance(),
 		private geolocation = window.navigator.geolocation,
-		private newReportStorage = StorageFactory.create<Partial<CreateReportRequest>>('newReport', {}),
-		private fileUrlsStorage = StorageFactory.create<string[]>('fileUrls', [])
+		private newReportStorage = StorageFactory.create<Partial<CreateReportRequest>>('newReport'),
+		private uploadFilesStore = new UploadFilesStore('fileUrls'),
 	) { }
 
 	/**
@@ -30,7 +31,7 @@ export class NewReportFormStore {
 	 */
 	public newReportFormProps: IComputedValue<NewReportFormProps> = computed(() => ({
 		report: this.report.get(),
-		fileUrls: this.fileUrls,
+		fileUrls: this.uploadFilesStore.fileUrls.get(),
 		updateReport: this.updateReport,
 		saveReport: this.saveReport,
 		resetReport: this.resetReport,
@@ -39,8 +40,8 @@ export class NewReportFormStore {
 		navigateToNewVehicleForm: this.navigateToNewVehicleForm,
 		navigateToEditVehicleForm: this.navigateToEditVehicleForm,
 		uploadFile: this.uploadFile,
-		fileUploading: this.fileUploading.get(),
-		removeFile: this.removeFile,
+		fileUploading: this.uploadFilesStore.fileUploading.get(),
+		removeFile: this.uploadFilesStore.removeFile,
 		removePerson: this.removePerson,
 		removeVehicle: this.removeVehicle
 	}));
@@ -79,7 +80,7 @@ export class NewReportFormStore {
 	/**
 	 * Report State
 	 */
-	private report = observable.box<Partial<CreateReportRequest>>(this.newReportStorage.get());
+	private report = observable.box<Partial<CreateReportRequest>>(this.newReportStorage.get() || {});
 
 	private updateReport = (update: Partial<CreateReportRequest>) => {
 		const updatedReport = { ...this.report.get(), ...update };
@@ -91,8 +92,7 @@ export class NewReportFormStore {
 	private resetReport = () => {
 		this.report.set({});
 		this.newReportStorage.clear();
-		this.fileUrls = [];
-		this.fileUrlsStorage.clear();
+		this.uploadFilesStore.reset();
 		window.scrollTo(0, 0);
 	}
 
@@ -123,40 +123,13 @@ export class NewReportFormStore {
 	/**
 	 * Files state
 	 */
-	@observable.ref
-	private fileUrls: string[] = this.fileUrlsStorage.get();
-
-	private fileUploading = observable.box(false);
-
 	private uploadFile = action(async (file: File) => {
-		this.fileUploading.set(true);
-
-		try {
-			const { getUrl, filename } = await this.apiClient.media.uploadFile(file);
-			this.updateFiles(filename, getUrl);
-		} catch (e) {
-			console.error(e); // tslint:disable-line:no-console
-			this.fileUploading.set(false);
+		const filename = await this.uploadFilesStore.uploadFile(file);
+		if (filename != null) {
+			this.updateReport({
+				files: (this.report.get().files || []).concat({ filename })
+			});
 		}
-	});
-
-	private updateFiles = action((filename: string, fileUrl: string) => {
-		this.updateReport({
-			files: (this.report.get().files || []).concat({ filename })
-		});
-
-		const updatedFileUrls = this.fileUrls.concat(fileUrl);
-		this.fileUrls = updatedFileUrls;
-		this.fileUrlsStorage.set(updatedFileUrls);
-		this.fileUploading.set(false);
-	});
-
-	private removeFile = action((fileIndex: number) => {
-		const updatedFileUrls = Array.from(this.fileUrls);
-
-		updatedFileUrls.splice(fileIndex, 1);
-		this.fileUrls = updatedFileUrls;
-		this.fileUrlsStorage.set(updatedFileUrls);
 	});
 
 	/**

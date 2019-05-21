@@ -35,7 +35,8 @@ export class ApiClient {
 		findSortedPage: (page?: number) => this.client.get<Report[]>(this.reportsUrl, { params: { page } }),
 		findById: (id: number) => this.client.get<ReportDetails | null>(`${this.reportsUrl}/${id}`),
 		create: (req: CreateReportRequest) => this.client.post<ReportDetails>(this.reportsUrl, req),
-		addAddendum: (id: number, text: string) => this.client.post<ReportDetails>(`${this.reportsUrl}/${id}/addendum`, { text }),
+		addAddendum: (id: number, text: string, files: CreateReportFileRequest[] = []) => 
+			this.client.post<ReportDetails>(`${this.reportsUrl}/${id}/addendum`, { text, files }),
 		delete: (id: number) => this.client.delete(`${this.reportsUrl}/${id}`),
 		toggleInteresting: (id: number) => this.client.post<ReportDetails>(`${this.reportsUrl}/${id}/toggle_interesting`),
 		toggleValidated: (id: number) => this.client.post<ReportDetails>(`${this.reportsUrl}/${id}/toggle_validated`),
@@ -197,10 +198,13 @@ export interface Person extends CreatePersonRequest, Timestamped {
 export interface CreateReportAddendumRequest {
 	report_id: number;
 	text: string;
+	files?: CreateReportFileRequest[]
 }
 
-export interface ReportAddendum extends CreateReportAddendumRequest, Timestamped {
+export interface ReportAddendum extends Timestamped {
 	id: number;
+	report_id: number;
+	text: string;
 }
 
 export interface MediaSignedUpload {
