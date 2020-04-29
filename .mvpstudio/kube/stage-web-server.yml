@@ -2,99 +2,83 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: stage-emerald-citizen-deployment
+  name: web
   namespace: stage-emerald-citizen
   labels:
-    app: emerald-citizen
+    app: web
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: emerald-citizen
+      app: web
   template:
     metadata:
       labels:
-        app: emerald-citizen
+        app: web
     spec:
       volumes:
-      - name: google-cloud-key
-        secret:
-          secretName: google-cloud-key
-      containers:
-      - name: web-server
-        image: mvpstudio/emerald-citizen:f9b468f
-        resources:
-           limits:
-              cpu: 0.25
-              memory: 250Mi
-           requests:
-              cpu: 0.25
-              memory: 250Mi
-        ports:
-        - containerPort: 8080
-        volumeMounts:
         - name: google-cloud-key
-          mountPath: /var/secrets/google
-        env: 
-        - name: NODE_ENV
-          value: production
-        - name: DATABASE_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: emerald-citizen-postgres
-              key: password
-        - name: DATABASE_USER
-          valueFrom:
-            secretKeyRef:
-              name: emerald-citizen-postgres
-              key: username
-        - name: DATABASE_HOST
-          value: emerald-citizen-postgres
-        - name: GOOGLE_MAPS_WEB_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: google-maps-api-key
-              key: apikey
-        - name: SESSION_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: session-secret
-              key: secret
-        - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: /var/secrets/google/key.json
-        - name: STORAGE_BUCKET
-          value: stage-emerald-citizen
+          secret:
+            secretName: google-cloud-key
+      containers:
+        - name: web-server
+          image: mvpstudio/emerald-citizen:f9b468f
+          resources:
+            limits:
+              cpu: 0.2
+              memory: 100Mi
+            requests:
+              cpu: 0.2
+              memory: 100Mi
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: google-cloud-key
+              mountPath: /var/secrets/google
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: emerald-citizen-postgres
+                  key: password
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: emerald-citizen-postgres
+                  key: username
+            - name: DATABASE_HOST
+              value: postgres
+            - name: GOOGLE_MAPS_WEB_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: google-maps-api-key
+                  key: apikey
+            - name: SESSION_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: session-secret
+                  key: secret
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /var/secrets/google/key.json
+            - name: STORAGE_BUCKET
+              value: stage-emerald-citizen
   strategy:
     type: RollingUpdate
     rollingUpdate:
       maxSurge: 1
-      maxUnavailable: 1 
+      maxUnavailable: 1
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: emerald-citizen-web
+  name: web
   namespace: stage-emerald-citizen
-  annotations:
-    getambassador.io/config: |
-      ---
-      apiVersion: ambassador/v0
-      kind: Mapping
-      name: stage-emerald-citizen-mapping
-      host: test.emeraldcitizen.org
-      prefix: /
-      service: emerald-citizen-web.stage-emerald-citizen
-      ---
-      apiVersion: ambassador/v0
-      kind: TLSContext
-      name: stage-emerald-citizen-tls
-      hosts:
-      - test.emeraldcitizen.org
-      secret: emerald-citizen-certification
 spec:
   selector:
-     app: emerald-citizen
+    app: web
   ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 8080
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
