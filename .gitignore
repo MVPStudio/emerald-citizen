@@ -9,3 +9,4 @@ src/public/static/styles.css*
 build
 !build/Dockerfile
 stage-emerald-citizen.json
+.secrets
