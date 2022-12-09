@@ -30,7 +30,7 @@
 		"csurf": "^1.9.0",
 		"dotenv": "^2.0.0",
 		"errorhandler": "^1.4.3",
-		"express": "^4.16.3",
+		"express": "^4.17.3",
 		"express-cluster": "^0.0.5",
 		"express-session": "^1.15.6",
 		"knex": "^0.15.2",
